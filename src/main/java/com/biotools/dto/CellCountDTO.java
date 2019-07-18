@@ -1,6 +1,7 @@
 package com.biotools.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import lombok.Data;
@@ -9,6 +10,10 @@ import lombok.Data;
 public class CellCountDTO implements Serializable {
 
 	private static final long serialVersionUID = 8235241511770606171L;
-	private Date countDate;
-	private int countValue;
+	private int initialQuantity;
+	private Date beginDay;
+	private int finalQuantity;
+	private Date endDay;
+	private BigDecimal populationDoubling;
+	private BigDecimal doublingTime;
 }
