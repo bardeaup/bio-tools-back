@@ -3,29 +3,33 @@ package com.biotools.rc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biotools.as.CellCountExperimentAS;
-import com.biotools.dto.ProliferationExperimentDTO;
+import com.biotools.dto.CellularCountProjectDTO;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("proliferation-experiment")
+@RequestMapping("api/proliferation-experiment")
 public class ProliferationExperimentController {
 	
 	@Autowired
 	CellCountExperimentAS cellCountExperimentAS; 
 	
 	@PostMapping
-	public ResponseEntity<ProliferationExperimentDTO> saveAndAnalyseExperiement(
-			@RequestBody ProliferationExperimentDTO exp){
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public ResponseEntity<CellularCountProjectDTO> saveAndAnalyseExperiement(
+			@RequestBody CellularCountProjectDTO p){
 		try {
-			exp = this.cellCountExperimentAS.saveAndAnalyseExperiement(exp);
-			return new ResponseEntity<ProliferationExperimentDTO>(exp, HttpStatus.OK);
+			this.cellCountExperimentAS.saveAndAnalyseExperiement(p);
+			return new ResponseEntity<CellularCountProjectDTO>(p, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<ProliferationExperimentDTO>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<CellularCountProjectDTO>(HttpStatus.BAD_REQUEST);
 		}	
 	}
 

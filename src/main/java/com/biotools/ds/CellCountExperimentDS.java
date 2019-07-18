@@ -5,52 +5,71 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.biotools.dto.CellCountDTO;
-import com.biotools.dto.ProliferationExperimentDTO;
+import com.biotools.dto.ConditionDTO;
 
 
 @Service
 public class CellCountExperimentDS {
-	
-	
-	public void saveCellCountExperiment(String cellLine,
-			CellCountDTO firstCount, CellCountDTO secondCount) {
 
+	/**
+	 * Sauvegarde en BDD l'expérience
+	 * @param experiment
+	 */
+	//public void saveCellCountExperiment(ProliferationExperimentDTO experiment) {
+
+	//}
+
+	/**
+	 * Déclanche le calcul de PD et DT
+	 * @param conditionList
+	 * @return
+	 */
+	public List<ConditionDTO> analyseCellCountExperiment(List<ConditionDTO> conditionList) {
+
+		for (ConditionDTO condition : conditionList) {
+			if (condition.getCellCountList() != null && !condition.getCellCountList().isEmpty()) {
+				for (CellCountDTO count : condition.getCellCountList()) {
+					count.setDoublingTime(this.doublingTimeComputation(count).setScale(2, RoundingMode.HALF_UP));
+					count.setPopulationDoubling(this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
+				}
+			}
+		}
+
+		return conditionList;
 	}
 
-	public ProliferationExperimentDTO analyseCellCountExperiment(String cellLine,
-			CellCountDTO firstCount, CellCountDTO secondCount) {
-		ProliferationExperimentDTO experimentDTO = new ProliferationExperimentDTO();
-		experimentDTO.setCellLine(cellLine);
-		experimentDTO.setDoublingTime(this.doublingTimeComputation(cellLine, firstCount, secondCount).setScale(2,RoundingMode.HALF_UP));
-		experimentDTO.setPopulationDoubling(this.populationDoublingComputation(cellLine, firstCount, secondCount).setScale(2,RoundingMode.HALF_UP));
-		List<CellCountDTO> cellCountList = new ArrayList<>();
-		cellCountList.add(firstCount);
-		cellCountList.add(secondCount);
-		experimentDTO.setCellCountList(cellCountList);
-		return experimentDTO;
-	}
-	
-	private BigDecimal doublingTimeComputation(String cellLine,
-			CellCountDTO firstCount, CellCountDTO secondCount) {
-		
-		LocalDateTime fromDateTime = LocalDateTime.ofInstant(firstCount.getCountDate().toInstant(), ZoneId.systemDefault());
-		LocalDateTime toDateTime = LocalDateTime.ofInstant(secondCount.getCountDate().toInstant(), ZoneId.systemDefault());
+	 
+	/**
+	 * Calcul du doubling time
+	 * @param cellCount
+	 * @return
+	 */
+	private BigDecimal doublingTimeComputation(CellCountDTO cellCount) {
+
+		LocalDateTime fromDateTime = LocalDateTime.ofInstant(cellCount.getBeginDay().toInstant(),
+				ZoneId.systemDefault());
+		LocalDateTime toDateTime = LocalDateTime.ofInstant(cellCount.getEndDay().toInstant(), ZoneId.systemDefault());
 		double hours = LocalDateTime.from(fromDateTime).until(toDateTime, ChronoUnit.HOURS);
-		double result = (Math.log10(2) * hours) / (Math.log10(secondCount.getCountValue()) - Math.log10(firstCount.getCountValue()));
+		double result = (Math.log10(2) * hours)
+				/ (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()));
 
 		return new BigDecimal(result);
 	}
-	
-	private BigDecimal populationDoublingComputation(String cellLine,
-			CellCountDTO firstCount, CellCountDTO secondCount) {
-		double result = (Math.log10(secondCount.getCountValue()) - Math.log10(firstCount.getCountValue())) / Math.log10(2);
-		
+
+	/**
+	 * Calcul du Population doubling
+	 * @param cellCount
+	 * @return
+	 */
+	private BigDecimal populationDoublingComputation(CellCountDTO cellCount) {
+		double result = (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()))
+				/ Math.log10(2);
+
 		return new BigDecimal(result);
 	}
 
