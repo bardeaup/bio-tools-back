@@ -15,5 +15,6 @@ public class CellCountDTO implements Serializable {
 	private int finalQuantity;
 	private Date endDay;
 	private BigDecimal populationDoubling;
+	private BigDecimal finalPopulationDoubling;
 	private BigDecimal doublingTime;
 }

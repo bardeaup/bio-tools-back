@@ -32,10 +32,18 @@ public class CellCountExperimentDS {
 	public List<ConditionDTO> analyseCellCountExperiment(List<ConditionDTO> conditionList) {
 
 		for (ConditionDTO condition : conditionList) {
+			BigDecimal finalPD = new BigDecimal(0);
+			if(condition.getInitialPopulationDoubling() != null) {	
+				finalPD = condition.getInitialPopulationDoubling();
+			}
 			if (condition.getCellCountList() != null && !condition.getCellCountList().isEmpty()) {
 				for (CellCountDTO count : condition.getCellCountList()) {
 					count.setDoublingTime(this.doublingTimeComputation(count).setScale(2, RoundingMode.HALF_UP));
 					count.setPopulationDoubling(this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
+					// gestion du PD total en fonction du PD initial.
+					finalPD = count.getPopulationDoubling().add(finalPD);
+					count.setFinalPopulationDoubling(finalPD);
+				
 				}
 			}
 		}
