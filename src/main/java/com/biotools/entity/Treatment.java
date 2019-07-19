@@ -6,27 +6,27 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import lombok.Data;
 
 @Data
 @Entity
-public class ProliferationExperimentConditions {
+public class Treatment {
 
 	@Id
     @GeneratedValue
-    private int id;
+    private Long id;
 	
 	@Column
-	private int proliferationExperimentId;
+	private String cellLine;
 	
 	@Column
-	private String name;
+	private Double initialPopulationDoubling;
 	
 	@Column
 	private Date creationDate;
-	
-//	@OneToMany
-//	private List<CellularCount> cellularCountList;
-	
+		
+	@ManyToOne
+	private Condition condition;
 }

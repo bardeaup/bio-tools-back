@@ -33,6 +33,7 @@ public class JwtProvider {
         UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();
  
         return Jwts.builder()
+        		.setId(userPrincipal.getId().toString())
                     .setSubject((userPrincipal.getUsername()))
                     .setIssuedAt(new Date())
                     .setExpiration(new Date((new Date()).getTime() + jwtExpiration*1000))
@@ -64,5 +65,12 @@ public class JwtProvider {
                       .setSigningKey(jwtSecret)
                       .parseClaimsJws(token)
                       .getBody().getSubject();
+    }
+    
+    public String getUserIdFromJwtToken(String token) {
+        return Jwts.parser()
+                      .setSigningKey(jwtSecret)
+                      .parseClaimsJws(token)
+                      .getBody().getId();
     }
 }

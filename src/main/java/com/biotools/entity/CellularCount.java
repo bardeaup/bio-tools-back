@@ -1,11 +1,14 @@
 package com.biotools.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import lombok.Data;
 
@@ -15,11 +18,8 @@ public class CellularCount {
 
 	@Id
     @GeneratedValue
-    private int id;
-	
-	@Column
-	private int conditionId;
-	
+    private Long id;
+
 	@Column
 	private Date beginDate;
 	
@@ -37,5 +37,11 @@ public class CellularCount {
 	
 	@Column
 	private Double dt;
+	
+	@Column
+	private Double finalPd;
+	
+	@ManyToOne
+	private Condition condition;
 	
 }
