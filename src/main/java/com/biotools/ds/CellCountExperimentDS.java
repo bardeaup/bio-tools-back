@@ -7,25 +7,36 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.biotools.dto.CellCountDTO;
+import com.biotools.dto.CellularCountProjectDTO;
 import com.biotools.dto.ConditionDTO;
-
+import com.biotools.entity.ProliferationExperiment;
+import com.biotools.mapper.ExperimentMapper;
 
 @Service
 public class CellCountExperimentDS {
+	
+	@Autowired
+	ExperimentMapper experimentMapper;
 
 	/**
 	 * Sauvegarde en BDD l'expérience
+	 * 
 	 * @param experiment
 	 */
-	//public void saveCellCountExperiment(ProliferationExperimentDTO experiment) {
-
-	//}
+	public void saveCellCountExperiment(CellularCountProjectDTO project) {
+		// Mapping vers Entity
+		ProliferationExperiment proliferationExperimentEntity = experimentMapper.cellularCountProjectDTOToProliferationExperimentEntity(project);
+		proliferationExperimentEntity.setProjectName(project.getProjectName());
+		
+	}
 
 	/**
 	 * Déclanche le calcul de PD et DT
+	 * 
 	 * @param conditionList
 	 * @return
 	 */
@@ -33,17 +44,18 @@ public class CellCountExperimentDS {
 
 		for (ConditionDTO condition : conditionList) {
 			BigDecimal finalPD = new BigDecimal(0);
-			if(condition.getInitialPopulationDoubling() != null) {	
+			if (condition.getInitialPopulationDoubling() != null) {
 				finalPD = condition.getInitialPopulationDoubling();
 			}
 			if (condition.getCellCountList() != null && !condition.getCellCountList().isEmpty()) {
 				for (CellCountDTO count : condition.getCellCountList()) {
 					count.setDoublingTime(this.doublingTimeComputation(count).setScale(2, RoundingMode.HALF_UP));
-					count.setPopulationDoubling(this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
+					count.setPopulationDoubling(
+							this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
 					// gestion du PD total en fonction du PD initial.
 					finalPD = count.getPopulationDoubling().add(finalPD);
 					count.setFinalPopulationDoubling(finalPD);
-				
+
 				}
 			}
 		}
@@ -51,9 +63,9 @@ public class CellCountExperimentDS {
 		return conditionList;
 	}
 
-	 
 	/**
 	 * Calcul du doubling time
+	 * 
 	 * @param cellCount
 	 * @return
 	 */
@@ -71,6 +83,7 @@ public class CellCountExperimentDS {
 
 	/**
 	 * Calcul du Population doubling
+	 * 
 	 * @param cellCount
 	 * @return
 	 */
