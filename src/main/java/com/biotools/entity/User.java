@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,8 +19,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.NaturalId;
  
 @Entity
 @Table(name = "user", uniqueConstraints = {
@@ -33,14 +31,14 @@ import org.hibernate.annotations.NaturalId;
 })
 public class User{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
  
     @NotBlank
     @Size(min=3, max = 50)
     private String username;
  
-    @NaturalId
+    
     @NotBlank
     @Size(max = 50)
     @Email
@@ -50,14 +48,16 @@ public class User{
     @Size(min=6, max = 100)
     private String password;
  
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "user_roles", 
       joinColumns = @JoinColumn(name = "user_id"), 
       inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<ProliferationExperiment> proliferationExperimentList = new ArrayList<>();
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Experiment> proliferationExperimentList = new ArrayList<>();
  
     public User() {}
  

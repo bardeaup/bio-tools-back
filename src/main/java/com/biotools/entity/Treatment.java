@@ -1,12 +1,14 @@
 package com.biotools.entity;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import lombok.Data;
 
@@ -15,18 +17,22 @@ import lombok.Data;
 public class Treatment {
 
 	@Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 	
 	@Column
-	private String cellLine;
+	private String name;
 	
 	@Column
-	private Double initialPopulationDoubling;
+	private int concentrationValue;
 	
-	@Column
-	private Date creationDate;
+    @Column
+	private Long concentrationUnitId;
 		
-	@ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "condition_id")
 	private Condition condition;
+	
+	@OneToOne
+	private ConcentrationUnit unit;
 }

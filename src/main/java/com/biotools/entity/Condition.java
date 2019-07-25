@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -19,7 +21,7 @@ import lombok.Data;
 public class Condition {
 
 	@Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
 	@Column
@@ -31,13 +33,19 @@ public class Condition {
 	@Column
 	private Date creationDate;
 	
+
 	@ManyToOne
-	private ProliferationExperiment experiment;
+	@JoinColumn(name = "experiment_id")
+	private Experiment experiment;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "condition")
+	@OneToMany(mappedBy = "condition",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
 	private List<CellularCount> cellularCountList = new ArrayList<CellularCount>();
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "condition")
-	private List<Treatment> treatmentList= new ArrayList<Treatment>();
+//	@OneToMany(mappedBy = "condition",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true)
+//	private List<Treatment> treatmentList= new ArrayList<Treatment>();
 	
 }

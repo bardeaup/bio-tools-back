@@ -8,30 +8,51 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountProjectDTO;
 import com.biotools.dto.ConditionDTO;
-import com.biotools.entity.ProliferationExperiment;
+import com.biotools.entity.Experiment;
 import com.biotools.mapper.ExperimentMapper;
+import com.biotools.repository.ProliferationExperimentRepository;
+import com.biotools.repository.UserRepository;
+import com.biotools.security.services.UserPrinciple;
 
 @Service
 public class CellCountExperimentDS {
-	
+
 	@Autowired
-	ExperimentMapper experimentMapper;
+	private ExperimentMapper experimentMapper;
+
+//	@Autowired
+//	ExperimentMapperMapstruct experimentMapper;
+
+	@Autowired
+	private ProliferationExperimentRepository experimentRepo;
+
+	@Autowired
+	private UserRepository userRepo;
 
 	/**
 	 * Sauvegarde en BDD l'expérience
 	 * 
 	 * @param experiment
 	 */
+	@Transactional
 	public void saveCellCountExperiment(CellularCountProjectDTO project) {
+
+		// Récupération de l'id User
+		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 		// Mapping vers Entity
-		ProliferationExperiment proliferationExperimentEntity = experimentMapper.cellularCountProjectDTOToProliferationExperimentEntity(project);
-		proliferationExperimentEntity.setProjectName(project.getProjectName());
-		
+		Experiment proliferationExperimentEntity = experimentMapper
+				.cellularCountProjectDTOToProliferationExperimentEntity(project);
+
+		proliferationExperimentEntity.setUser(userRepo.findUserById(principal.getId()));
+		experimentRepo.saveAndFlush(proliferationExperimentEntity);
 	}
 
 	/**
@@ -61,6 +82,12 @@ public class CellCountExperimentDS {
 		}
 
 		return conditionList;
+	}
+
+	public List<Experiment> loadUserExistingExperiment() {
+		// Récupération de l'id User
+		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return this.experimentRepo.findAllByUserId(principal.getId());
 	}
 
 	/**

@@ -1,19 +1,22 @@
 package com.biotools.repository;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.biotools.entity.ProliferationExperiment;
+import com.biotools.entity.Experiment;
 
-public interface ProliferationExperimentRepository extends JpaRepository<ProliferationExperiment,Long> {
-	Optional<ProliferationExperiment> findById(Long id);
+public interface ProliferationExperimentRepository extends JpaRepository<Experiment,Long> {
+	Optional<Experiment> findById(Long id);
 	
-	Optional<ProliferationExperiment> findByProjectName(String projectName);
+	Optional<Experiment> findByProjectName(String projectName);
 	
 	Boolean existsByProjectName(String projectName);
 	
-	ProliferationExperiment saveProliferationExperiment(ProliferationExperiment experiment);
+	List<Experiment> findAllByUserId(Long userId);
+	
+//	ProliferationExperiment saveProliferationExperiment(ProliferationExperiment experiment);
 
 }
