@@ -27,14 +27,18 @@ public class CellCountExperimentDS {
 	@Autowired
 	private ExperimentMapper experimentMapper;
 
-//	@Autowired
-//	ExperimentMapperMapstruct experimentMapper;
-
 	@Autowired
 	private ProliferationExperimentRepository experimentRepo;
 
 	@Autowired
 	private UserRepository userRepo;
+	
+	@Transactional
+	public boolean isExperimentNameAlreadyUsed(String projectName) {
+		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return experimentRepo.existsByUserIdAndProjectName(principal.getId(), projectName);
+	}
+	
 
 	/**
 	 * Sauvegarde en BDD l'expérience
@@ -84,10 +88,12 @@ public class CellCountExperimentDS {
 		return conditionList;
 	}
 
+	@Transactional
 	public List<Experiment> loadUserExistingExperiment() {
 		// Récupération de l'id User
 		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return this.experimentRepo.findAllByUserId(principal.getId());
+		List<Experiment> experimentList = this.experimentRepo.findAllByUserId(principal.getId()); 
+		return experimentList;
 	}
 
 	/**

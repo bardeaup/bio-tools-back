@@ -34,4 +34,28 @@ public interface ExperimentMapperMapstruct {
 	
 	Treatment treatmentDTOToEntity (TreatmentDTO treatmentDTO);
 
+	// --------- Mapping inverse --------------------
+	
+
+	List<CellularCountProjectDTO> proliferationExperimentEntityListToDto(
+			List<Experiment> experimentList);
+	
+	@Mapping(target="conditionList", source="conditions")
+	CellularCountProjectDTO proliferationExperimentEntityToDto(
+			Experiment experiment);
+		
+	List<ConditionDTO> ConditionEntityListToDto (List<Condition> conditionList);
+	
+	@Mapping(target="cellCountList", source="cellularCountList")
+	ConditionDTO ConditionEntityToDto(Condition condition);
+	
+	List<CellCountDTO> cellCountEntityListToDto (List<CellularCount> cellCountEntityList);
+	
+	CellCountDTO cellCountEntityToDto (CellularCount cellCountEntity);
+	
+	List<TreatmentDTO> treatmentEntityListToDto (List<Treatment> treatmentEntityList);
+	
+	TreatmentDTO treatmentEntityToDto (Treatment treatmentEntity);
+	
+	
 }

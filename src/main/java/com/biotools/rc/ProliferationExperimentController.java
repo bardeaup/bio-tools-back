@@ -34,6 +34,7 @@ public class ProliferationExperimentController {
 			this.cellCountExperimentAS.saveAndAnalyseExperiement(p);
 			return new ResponseEntity<CellularCountProjectDTO>(p, HttpStatus.OK);
 		} catch (Exception e) {
+			// TODO : gestion des erreurs, renvoyer un objet commun en retour de chaque API avec erreur et content
 			return new ResponseEntity<CellularCountProjectDTO>(HttpStatus.BAD_REQUEST);
 		}	
 	}
@@ -41,8 +42,12 @@ public class ProliferationExperimentController {
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<List<CellularCountProjectDTO>> loadExperiment(){
-		this.cellCountExperimentAS.loadExistingUserExperiment();
-		return new ResponseEntity<List<CellularCountProjectDTO>>(HttpStatus.OK);
+		List<CellularCountProjectDTO> cellularCountProjectDTOs = this.cellCountExperimentAS.loadExistingUserExperiment();
+		if(cellularCountProjectDTOs != null) {
+			return new ResponseEntity<List<CellularCountProjectDTO>>(cellularCountProjectDTOs, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<List<CellularCountProjectDTO>>(HttpStatus.NO_CONTENT);
+		}
 	}
 
 }
