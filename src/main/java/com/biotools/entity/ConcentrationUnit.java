@@ -1,9 +1,13 @@
 package com.biotools.entity;
 
+import java.math.BigInteger;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 import lombok.Data;
 
@@ -11,11 +15,14 @@ import lombok.Data;
 @Entity
 public class ConcentrationUnit {
 
-	@Id
-    @GeneratedValue
-    private Long id;
-
+    @Id
+	@Column(unique = true)
+	private String id;
+	
 	@Column
-	private String unit;
-		
+	private String unitLabel;
+	
+	@Column
+	private BigInteger numericValue;
+	
 }

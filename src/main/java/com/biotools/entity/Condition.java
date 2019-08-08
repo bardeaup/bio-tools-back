@@ -43,9 +43,9 @@ public class Condition {
             orphanRemoval = true)
 	private List<CellularCount> cellularCountList = new ArrayList<CellularCount>();
 	
-//	@OneToMany(mappedBy = "condition",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true)
-//	private List<Treatment> treatmentList= new ArrayList<Treatment>();
+	@OneToMany(mappedBy = "condition",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+	private List<Treatment> treatmentList= new ArrayList<Treatment>();
 	
 }

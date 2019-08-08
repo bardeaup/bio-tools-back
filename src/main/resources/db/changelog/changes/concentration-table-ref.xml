@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    
+    <changeSet author="pbardeau" id="1-2">
+        <insert tableName="CONCENTRATION_UNIT">
+            <column name="id" value="M"/>
+            <column name="unit_label" value="mol/L"/>
+            <column name="numeric_value" valueNumeric="1"/>
+        </insert>
+        <insert tableName="CONCENTRATION_UNIT">
+            <column name="id" value="mM"/>
+            <column name="unit_label" value="mmol/L"/>
+            <column name="numeric_value" valueNumeric="0.001"/>
+        </insert>
+        <insert tableName="CONCENTRATION_UNIT">
+            <column name="id" value="uM"/>
+            <column name="unit_label" value="µmol/L"/>
+            <column name="numeric_value" valueNumeric="0.000001"/>
+        </insert>
+        <insert tableName="CONCENTRATION_UNIT">
+            <column name="id" value="nM"/>
+            <column name="unit_label" value="nmol/L"/>
+            <column name="numeric_value" valueNumeric="0.000000001"/>
+        </insert>
+		<!--  Pourcentage massique -->
+        <insert tableName="CONCENTRATION_UNIT">
+            <column name="id" value="MASS_VOLUME_PERCENT"/>
+            <column name="unit_label" value="g/100 mL"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

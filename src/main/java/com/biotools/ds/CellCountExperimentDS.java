@@ -104,9 +104,9 @@ public class CellCountExperimentDS {
 	 */
 	private BigDecimal doublingTimeComputation(CellCountDTO cellCount) {
 
-		LocalDateTime fromDateTime = LocalDateTime.ofInstant(cellCount.getBeginDay().toInstant(),
+		LocalDateTime fromDateTime = LocalDateTime.ofInstant(cellCount.getBeginDate().toInstant(),
 				ZoneId.systemDefault());
-		LocalDateTime toDateTime = LocalDateTime.ofInstant(cellCount.getEndDay().toInstant(), ZoneId.systemDefault());
+		LocalDateTime toDateTime = LocalDateTime.ofInstant(cellCount.getEndDate().toInstant(), ZoneId.systemDefault());
 		double hours = LocalDateTime.from(fromDateTime).until(toDateTime, ChronoUnit.HOURS);
 		double result = (Math.log10(2) * hours)
 				/ (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()));

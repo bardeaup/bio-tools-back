@@ -11,9 +11,9 @@ public class CellCountDTO implements Serializable {
 
 	private static final long serialVersionUID = 8235241511770606171L;
 	private int initialQuantity;
-	private Date beginDay;
+	private Date beginDate;
 	private int finalQuantity;
-	private Date endDay;
+	private Date endDate;
 	private BigDecimal populationDoubling;
 	private BigDecimal finalPopulationDoubling;
 	private BigDecimal doublingTime;

@@ -3,6 +3,7 @@ package com.biotools.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.biotools.dto.CellCountDTO;
@@ -13,9 +14,13 @@ import com.biotools.entity.CellularCount;
 import com.biotools.entity.Condition;
 import com.biotools.entity.Experiment;
 import com.biotools.entity.Treatment;
+import com.biotools.repository.ConcentrationUnitRepository;
 
 @Service
 public class ExperimentMapper {
+	
+	@Autowired
+	private ConcentrationUnitRepository concentrationUnitRepository;
 
 	public Experiment cellularCountProjectDTOToProliferationExperimentEntity(
 			CellularCountProjectDTO cellularCountProjectDTO) {
@@ -34,13 +39,14 @@ public class ExperimentMapper {
 				List<CellularCount> cellCountList = new ArrayList<>();
 				for (CellCountDTO cellCountDTO : conditionDTO.getCellCountList()) {
 					CellularCount cellularCount = new CellularCount();
-					cellularCount.setBeginDate(cellCountDTO.getBeginDay());
-					cellularCount.setInitialCellQuantity(cellCountDTO.getInitialQuantity());
-					cellularCount.setEndDate(cellCountDTO.getEndDay());
-					cellularCount.setFinalCellQuantity(cellCountDTO.getFinalQuantity());
+					cellularCount.setBeginDate(cellCountDTO.getBeginDate());
+					cellularCount.setInitialQuantity(cellCountDTO.getInitialQuantity());
+					cellularCount.setEndDate(cellCountDTO.getEndDate());
+					cellularCount.setFinalQuantity(cellCountDTO.getFinalQuantity());
 					cellularCount.setDt(cellCountDTO.getDoublingTime().doubleValue());
 					cellularCount.setPd(cellCountDTO.getPopulationDoubling().doubleValue());
 					cellularCount.setFinalPd(cellCountDTO.getFinalPopulationDoubling().doubleValue());
+					cellularCount.setCondition(condition);
 					cellCountList.add(cellularCount);
 				}
 				condition.getCellularCountList().addAll(cellCountList);
@@ -49,12 +55,14 @@ public class ExperimentMapper {
 			if(conditionDTO.getTreatmentList() != null && !conditionDTO.getTreatmentList().isEmpty()) {
 				for(TreatmentDTO treatmentDTO : conditionDTO.getTreatmentList()) {
 					Treatment treatment = new Treatment();
-					treatment.setConcentrationUnitId(treatmentDTO.getConcentrationUnitId());
+					treatment.setUnit(concentrationUnitRepository.findById(treatmentDTO.getConcentrationUnitId()));
+					treatment.setName(treatmentDTO.getName());
 					treatment.setConcentrationValue(treatmentDTO.getConcentrationValue());
+					treatment.setCondition(condition);
 					treatmentList.add(treatment);
 				}
 			} 
-//			condition.setTreatmentList(treatmentList);
+			condition.setTreatmentList(treatmentList);
 			conditions.add(condition);
 		}
 		proliferationExperiment.getConditions().addAll(conditions);

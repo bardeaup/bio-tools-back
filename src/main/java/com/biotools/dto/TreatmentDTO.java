@@ -6,6 +6,6 @@ import lombok.Data;
 public class TreatmentDTO {
 	private String name;
 	private int concentrationValue;
-	private Long concentrationUnitId;
+	private String concentrationUnitId;
 	private String concentrationUnit;
 }

@@ -25,9 +25,6 @@ public class Treatment {
 	
 	@Column
 	private int concentrationValue;
-	
-    @Column
-	private Long concentrationUnitId;
 		
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "condition_id")

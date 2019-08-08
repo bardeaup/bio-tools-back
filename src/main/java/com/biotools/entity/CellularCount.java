@@ -27,10 +27,10 @@ public class CellularCount {
 	private Date endDate;
 	
 	@Column 
-	private int initialCellQuantity;
+	private int initialQuantity;
 	
 	@Column 
-	private int finalCellQuantity;
+	private int finalQuantity;
 	
 	@Column
 	private Double pd;
@@ -40,9 +40,7 @@ public class CellularCount {
 	
 	@Column
 	private Double finalPd;
-	
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "condition_id")
+
 	@ManyToOne
 	@JoinColumn
 	private Condition condition;
