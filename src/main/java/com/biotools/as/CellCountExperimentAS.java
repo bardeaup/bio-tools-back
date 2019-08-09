@@ -53,4 +53,10 @@ public class CellCountExperimentAS {
 		}
 		return cellularCountProjectDTOs;
 	}
+	
+	public CellularCountProjectDTO loadExistingUserExperimentByName(String name) {
+		CellularCountProjectDTO cellularCountProjectDTO = null;
+		Experiment experiment = cellCountExperimentDS.loadUserExistingExperimentByName(name);
+		return this.mapper.proliferationExperimentEntityToDto(experiment);
+	}
 }

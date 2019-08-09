@@ -18,5 +18,7 @@ public interface ProliferationExperimentRepository extends JpaRepository<Experim
 	List<Experiment> findAllByUserId(Long userId);
 	
 	Boolean existsByUserIdAndProjectName(Long userId, String projectName);
+	
+	Experiment findByUserIdAndProjectName(Long userId, String projectName);
 
 }

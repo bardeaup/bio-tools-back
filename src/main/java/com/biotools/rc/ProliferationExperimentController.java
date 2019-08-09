@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,6 @@ public class ProliferationExperimentController {
 	public ResponseEntity<CellularCountProjectDTO> saveAndAnalyseExperiment(
 			@RequestBody CellularCountProjectDTO p){
 		
-		
 		try {
 			this.cellCountExperimentAS.saveAndAnalyseExperiement(p);
 			return new ResponseEntity<CellularCountProjectDTO>(p, HttpStatus.OK);
@@ -48,6 +48,14 @@ public class ProliferationExperimentController {
 		} else {
 			return new ResponseEntity<List<CellularCountProjectDTO>>(HttpStatus.NO_CONTENT);
 		}
+	}
+	
+	@GetMapping(path="/{name}")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public ResponseEntity<CellularCountProjectDTO> loadUserExperimentByBame(@PathVariable("name") String name){
+		CellularCountProjectDTO cellularCountProjectDTO = this.cellCountExperimentAS.loadExistingUserExperimentByName(name);
+		return new ResponseEntity<CellularCountProjectDTO>(cellularCountProjectDTO, HttpStatus.OK);
+		
 	}
 
 }

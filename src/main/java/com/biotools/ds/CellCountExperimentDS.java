@@ -95,6 +95,13 @@ public class CellCountExperimentDS {
 		List<Experiment> experimentList = this.experimentRepo.findAllByUserId(principal.getId()); 
 		return experimentList;
 	}
+	
+	@Transactional
+	public Experiment loadUserExistingExperimentByName(String name) {
+		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Experiment experiment = this.experimentRepo.findByUserIdAndProjectName(principal.getId(), name);
+		return experiment;
+	}
 
 	/**
 	 * Calcul du doubling time

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountProjectDTO;
@@ -51,6 +52,11 @@ public interface ExperimentMapperMapstruct {
 	
 	List<CellCountDTO> cellCountEntityListToDto (List<CellularCount> cellCountEntityList);
 	
+	@Mappings({
+	      @Mapping(target="populationDoubling", source="pd"),
+	      @Mapping(target="doublingTime", source="dt"),
+	      @Mapping(target="finalPopulationDoubling", source="finalPd")
+	    })
 	CellCountDTO cellCountEntityToDto (CellularCount cellCountEntity);
 	
 	List<TreatmentDTO> treatmentEntityListToDto (List<Treatment> treatmentEntityList);
