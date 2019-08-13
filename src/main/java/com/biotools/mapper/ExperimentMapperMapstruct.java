@@ -61,6 +61,10 @@ public interface ExperimentMapperMapstruct {
 	
 	List<TreatmentDTO> treatmentEntityListToDto (List<Treatment> treatmentEntityList);
 	
+	@Mappings({
+	      @Mapping(target="concentrationUnitId", source="unit.id"),
+	      @Mapping(target="concentrationUnitLabel", source="unit.unitLabel")
+	      })
 	TreatmentDTO treatmentEntityToDto (Treatment treatmentEntity);
 	
 	

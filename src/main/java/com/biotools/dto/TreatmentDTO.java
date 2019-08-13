@@ -7,5 +7,5 @@ public class TreatmentDTO {
 	private String name;
 	private int concentrationValue;
 	private String concentrationUnitId;
-	private String concentrationUnit;
+	private String concentrationUnitLabel;
 }
