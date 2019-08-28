@@ -1,5 +1,6 @@
 package com.biotools.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +31,6 @@ public class Treatment {
 	@JoinColumn(name = "condition_id")
 	private Condition condition;
 	
-	@OneToOne
+	@OneToOne(cascade = {CascadeType.ALL})
 	private ConcentrationUnit unit;
 }

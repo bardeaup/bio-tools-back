@@ -42,11 +42,11 @@ public class CellCountExperimentDS {
 
 	/**
 	 * Sauvegarde en BDD l'expérience
-	 * 
-	 * @param experiment
+	 * @param project
+	 * @return experiment id
 	 */
 	@Transactional
-	public void saveCellCountExperiment(CellularCountProjectDTO project) {
+	public Long saveCellCountExperiment(CellularCountProjectDTO project) {
 
 		// Récupération de l'id User
 		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -56,7 +56,8 @@ public class CellCountExperimentDS {
 				.cellularCountProjectDTOToProliferationExperimentEntity(project);
 
 		proliferationExperimentEntity.setUser(userRepo.findUserById(principal.getId()));
-		experimentRepo.saveAndFlush(proliferationExperimentEntity);
+		Experiment savedExp = experimentRepo.saveAndFlush(proliferationExperimentEntity);
+		return savedExp.getId();
 	}
 
 	/**
@@ -100,6 +101,13 @@ public class CellCountExperimentDS {
 	public Experiment loadUserExistingExperimentByName(String name) {
 		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Experiment experiment = this.experimentRepo.findByUserIdAndProjectName(principal.getId(), name);
+		return experiment;
+	}
+	
+	@Transactional
+	public Experiment loadUserExistingExperimentById(Long id) {
+		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Experiment experiment = this.experimentRepo.findByUserIdAndId(principal.getId(), id);
 		return experiment;
 	}
 

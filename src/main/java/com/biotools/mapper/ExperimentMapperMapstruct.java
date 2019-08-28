@@ -9,9 +9,11 @@ import org.mapstruct.Mappings;
 import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountProjectDTO;
 import com.biotools.dto.ConditionDTO;
+import com.biotools.dto.DetailDTO;
 import com.biotools.dto.TreatmentDTO;
 import com.biotools.entity.CellularCount;
 import com.biotools.entity.Condition;
+import com.biotools.entity.Detail;
 import com.biotools.entity.Experiment;
 import com.biotools.entity.Treatment;
 
@@ -44,11 +46,13 @@ public interface ExperimentMapperMapstruct {
 	@Mapping(target="conditionList", source="conditions")
 	CellularCountProjectDTO proliferationExperimentEntityToDto(
 			Experiment experiment);
+	
+	DetailDTO detailEntityToDto(Detail detail);
 		
 	List<ConditionDTO> ConditionEntityListToDto (List<Condition> conditionList);
 	
 	@Mapping(target="cellCountList", source="cellularCountList")
-	ConditionDTO ConditionEntityToDto(Condition condition);
+	ConditionDTO conditionEntityToDto(Condition condition);
 	
 	List<CellCountDTO> cellCountEntityListToDto (List<CellularCount> cellCountEntityList);
 	

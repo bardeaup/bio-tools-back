@@ -1,6 +1,7 @@
 package com.biotools.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -29,6 +31,9 @@ public class Experiment {
 
 	@Column(name="project_name")
 	private String projectName;
+	
+	@Column
+	private Date creationDate;
 
 	@OneToMany(mappedBy = "experiment", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Condition> conditions = new ArrayList<Condition>();
@@ -36,5 +41,8 @@ public class Experiment {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
+	
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	private Detail detail;
 
 }

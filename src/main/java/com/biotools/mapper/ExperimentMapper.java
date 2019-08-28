@@ -1,6 +1,7 @@
 package com.biotools.mapper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import com.biotools.dto.ConditionDTO;
 import com.biotools.dto.TreatmentDTO;
 import com.biotools.entity.CellularCount;
 import com.biotools.entity.Condition;
+import com.biotools.entity.Detail;
 import com.biotools.entity.Experiment;
 import com.biotools.entity.Treatment;
 import com.biotools.repository.ConcentrationUnitRepository;
@@ -26,9 +28,22 @@ public class ExperimentMapper {
 			CellularCountProjectDTO cellularCountProjectDTO) {
 		Experiment proliferationExperiment = new Experiment();
 		proliferationExperiment.setProjectName(cellularCountProjectDTO.getProjectName());
+		proliferationExperiment.setCreationDate(new Date());
+		
 		// --- CONDITIONS --------
 		List<Condition> conditions = new ArrayList<>();
 		proliferationExperiment.getConditions();
+		
+		// --- DETAIL ------------
+		Detail detail = new Detail();
+		detail.setCultureMedia(cellularCountProjectDTO.getDetail().getCultureMedia());
+		detail.setAntibiotic(cellularCountProjectDTO.getDetail().getAntibiotic());
+		detail.setGrowthFactor(cellularCountProjectDTO.getDetail().getGrowthFactor());
+		detail.setDioxygenPercentage(cellularCountProjectDTO.getDetail().getDioxygenPercentage());
+		detail.setTemperature(cellularCountProjectDTO.getDetail().getTemperature());
+		detail.setConditionReplicat(cellularCountProjectDTO.getDetail().getConditionReplicat());
+		proliferationExperiment.setDetail(detail);
+		
 		for (ConditionDTO conditionDTO : cellularCountProjectDTO.getConditionList()) {
 			Condition condition = new Condition();
 			condition.setExperiment(proliferationExperiment);

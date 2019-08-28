@@ -1,7 +1,6 @@
 package com.biotools.entity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -30,10 +29,6 @@ public class Condition {
 	@Column
 	private Double initialPopulationDoubling;
 	
-	@Column
-	private Date creationDate;
-	
-
 	@ManyToOne
 	@JoinColumn(name = "experiment_id")
 	private Experiment experiment;
