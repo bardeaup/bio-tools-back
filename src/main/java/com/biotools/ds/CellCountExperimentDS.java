@@ -46,7 +46,7 @@ public class CellCountExperimentDS {
 	 * @return experiment id
 	 */
 	@Transactional
-	public Long saveCellCountExperiment(CellularCountProjectDTO project) {
+	public Experiment saveCellCountExperiment(CellularCountProjectDTO project) {
 
 		// Récupération de l'id User
 		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -57,7 +57,7 @@ public class CellCountExperimentDS {
 
 		proliferationExperimentEntity.setUser(userRepo.findUserById(principal.getId()));
 		Experiment savedExp = experimentRepo.saveAndFlush(proliferationExperimentEntity);
-		return savedExp.getId();
+		return savedExp;
 	}
 
 	/**

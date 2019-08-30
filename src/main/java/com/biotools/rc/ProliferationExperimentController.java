@@ -8,10 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biotools.as.CellCountExperimentAS;
@@ -28,15 +28,15 @@ public class ProliferationExperimentController {
 
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<Long> saveExperiment(@RequestBody CellularCountProjectDTO p)
+	public ResponseEntity<CellularCountProjectDTO> saveExperiment(@RequestBody CellularCountProjectDTO p)
 			throws UnicityConstraintException {
 
-		Long experimentId = this.cellCountExperimentAS.saveProliferationExperiment(p);
-		return new ResponseEntity<Long>(experimentId, HttpStatus.OK);
+		CellularCountProjectDTO experimentSaved = this.cellCountExperimentAS.saveProliferationExperiment(p);
+		return new ResponseEntity<CellularCountProjectDTO>(experimentSaved, HttpStatus.OK);
 
 	}
 
-	@GetMapping
+	@GetMapping(path = "all")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<List<CellularCountProjectDTO>> loadExperiment() {
 		List<CellularCountProjectDTO> cellularCountProjectDTOs = this.cellCountExperimentAS
@@ -48,20 +48,26 @@ public class ProliferationExperimentController {
 		}
 	}
 
-	@GetMapping(path = "/{name:[\\d]+}")
+	@GetMapping
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<CellularCountProjectDTO> loadUserExperimentByBame(@PathVariable("name") String name) {
-		CellularCountProjectDTO cellularCountProjectDTO = this.cellCountExperimentAS
-				.loadExistingUserExperimentByName(name);
+	public ResponseEntity<CellularCountProjectDTO> loadUserExperimentByBame(@RequestParam(name = "name", required = false) String name,
+			@RequestParam(name = "id", required = false) Long id) {
+		CellularCountProjectDTO cellularCountProjectDTO;
+		if (name != null) {
+			cellularCountProjectDTO = this.cellCountExperimentAS.loadExistingUserExperimentByName(name);
+		} else {
+			cellularCountProjectDTO = this.cellCountExperimentAS.loadExistingUserExperimentById(id);
+		}
 		return new ResponseEntity<CellularCountProjectDTO>(cellularCountProjectDTO, HttpStatus.OK);
 
 	}
-	@GetMapping(path = "/{id:^[0-9a-fA-F]{24}$}")
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<CellularCountProjectDTO> loadUserExperimentByBame(@PathVariable("id") Long id) {
-		CellularCountProjectDTO cellularCountProjectDTO = this.cellCountExperimentAS.loadExistingUserExperimentById(id);
-		return new ResponseEntity<CellularCountProjectDTO>(cellularCountProjectDTO, HttpStatus.OK);
 
-	}
+//	@GetMapping
+//	@PreAuthorize("hasRole('ROLE_USER')")
+//	public ResponseEntity<CellularCountProjectDTO> loadUserExperimentById(@RequestParam(name = "id") Long id) {
+//		CellularCountProjectDTO cellularCountProjectDTO = this.cellCountExperimentAS.loadExistingUserExperimentById(id);
+//		return new ResponseEntity<CellularCountProjectDTO>(cellularCountProjectDTO, HttpStatus.OK);
+//
+//	}
 
 }

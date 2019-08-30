@@ -28,13 +28,13 @@ public class CellCountExperimentAS {
 	 * @throws UnicityConstraintException
 	 */
 	@Transactional
-	public Long saveProliferationExperiment(CellularCountProjectDTO p) throws UnicityConstraintException {
+	public CellularCountProjectDTO saveProliferationExperiment(CellularCountProjectDTO p) throws UnicityConstraintException {
 
 		boolean projectNameError = this.cellCountExperimentDS.isExperimentNameAlreadyUsed(p.getProjectName());
 		if (projectNameError) {
 			throw new UnicityConstraintException("project name");
 		}
-		return this.cellCountExperimentDS.saveCellCountExperiment(p);
+		return this.mapper.proliferationExperimentEntityToDto(this.cellCountExperimentDS.saveCellCountExperiment(p));
 	}
 
 	/**
