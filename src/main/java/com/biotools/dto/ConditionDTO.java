@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class ConditionDTO {
+	private Long id;
 	private String cellLine;
 	private boolean isAdherentCell;
 	private BigDecimal initialPopulationDoubling;

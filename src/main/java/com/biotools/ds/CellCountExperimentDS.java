@@ -100,7 +100,7 @@ public class CellCountExperimentDS {
 	@Transactional
 	public Experiment loadUserExistingExperimentByName(String name) {
 		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Experiment experiment = this.experimentRepo.findByUserIdAndProjectName(principal.getId(), name);
+		Experiment experiment = this.experimentRepo.findByUserIdAndProjectNameIgnoreCase(principal.getId(), name);
 		return experiment;
 	}
 	

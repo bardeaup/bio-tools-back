@@ -62,12 +62,4 @@ public class ProliferationExperimentController {
 
 	}
 
-//	@GetMapping
-//	@PreAuthorize("hasRole('ROLE_USER')")
-//	public ResponseEntity<CellularCountProjectDTO> loadUserExperimentById(@RequestParam(name = "id") Long id) {
-//		CellularCountProjectDTO cellularCountProjectDTO = this.cellCountExperimentAS.loadExistingUserExperimentById(id);
-//		return new ResponseEntity<CellularCountProjectDTO>(cellularCountProjectDTO, HttpStatus.OK);
-//
-//	}
-
 }

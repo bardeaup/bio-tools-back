@@ -12,7 +12,7 @@ public interface ProliferationExperimentRepository extends JpaRepository<Experim
 	Optional<Experiment> findById(Long id);
 	
 	Optional<Experiment> findByProjectName(String projectName);
-	
+		
 	Boolean existsByProjectName(String projectName);
 	
 	List<Experiment> findAllByUserId(Long userId);
@@ -20,6 +20,8 @@ public interface ProliferationExperimentRepository extends JpaRepository<Experim
 	Boolean existsByUserIdAndProjectName(Long userId, String projectName);
 	
 	Experiment findByUserIdAndProjectName(Long userId, String projectName);
+	
+	Experiment findByUserIdAndProjectNameIgnoreCase(Long userId, String projectName);
 	
 	Experiment findByUserIdAndId(Long userId, Long id);
 
