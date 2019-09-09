@@ -21,26 +21,17 @@ public class CellularCount {
     private Long id;
 
 	@Column
-	private Date beginDate;
-	
-	@Column
-	private Date endDate;
+	private Date date;
 	
 	@Column 
-	private int initialQuantity;
+	private int quantity;
 	
-	@Column 
-	private int finalQuantity;
-	
-	@Column
+	@Column(columnDefinition = "double default 0")
 	private Double pd;
 	
 	@Column
 	private Double dt;
 	
-	@Column
-	private Double finalPd;
-
 	@ManyToOne
 	@JoinColumn
 	private Condition condition;

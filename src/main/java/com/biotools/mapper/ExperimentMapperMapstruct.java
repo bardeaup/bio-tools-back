@@ -58,8 +58,7 @@ public interface ExperimentMapperMapstruct {
 	
 	@Mappings({
 	      @Mapping(target="populationDoubling", source="pd"),
-	      @Mapping(target="doublingTime", source="dt"),
-	      @Mapping(target="finalPopulationDoubling", source="finalPd")
+	      @Mapping(target="doublingTime", source="dt")
 	    })
 	CellCountDTO cellCountEntityToDto (CellularCount cellCountEntity);
 	

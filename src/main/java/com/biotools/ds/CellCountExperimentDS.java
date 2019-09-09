@@ -75,12 +75,12 @@ public class CellCountExperimentDS {
 			}
 			if (condition.getCellCountList() != null && !condition.getCellCountList().isEmpty()) {
 				for (CellCountDTO count : condition.getCellCountList()) {
-					count.setDoublingTime(this.doublingTimeComputation(count).setScale(2, RoundingMode.HALF_UP));
-					count.setPopulationDoubling(
-							this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
-					// gestion du PD total en fonction du PD initial.
-					finalPD = count.getPopulationDoubling().add(finalPD);
-					count.setFinalPopulationDoubling(finalPD);
+//					count.setDoublingTime(this.doublingTimeComputation(count).setScale(2, RoundingMode.HALF_UP));
+//					count.setPopulationDoubling(
+//							this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
+//					// gestion du PD total en fonction du PD initial.
+//					finalPD = count.getPopulationDoubling().add(finalPD);
+//					count.setFinalPopulationDoubling(finalPD);
 
 				}
 			}
@@ -117,17 +117,17 @@ public class CellCountExperimentDS {
 	 * @param cellCount
 	 * @return
 	 */
-	private BigDecimal doublingTimeComputation(CellCountDTO cellCount) {
-
-		LocalDateTime fromDateTime = LocalDateTime.ofInstant(cellCount.getBeginDate().toInstant(),
-				ZoneId.systemDefault());
-		LocalDateTime toDateTime = LocalDateTime.ofInstant(cellCount.getEndDate().toInstant(), ZoneId.systemDefault());
-		double hours = LocalDateTime.from(fromDateTime).until(toDateTime, ChronoUnit.HOURS);
-		double result = (Math.log10(2) * hours)
-				/ (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()));
-
-		return new BigDecimal(result);
-	}
+//	private BigDecimal doublingTimeComputation(CellCountDTO cellCount) {
+//
+//		LocalDateTime fromDateTime = LocalDateTime.ofInstant(cellCount.getBeginDate().toInstant(),
+//				ZoneId.systemDefault());
+//		LocalDateTime toDateTime = LocalDateTime.ofInstant(cellCount.getEndDate().toInstant(), ZoneId.systemDefault());
+//		double hours = LocalDateTime.from(fromDateTime).until(toDateTime, ChronoUnit.HOURS);
+//		double result = (Math.log10(2) * hours)
+//				/ (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()));
+//
+//		return new BigDecimal(result);
+//	}
 
 	/**
 	 * Calcul du Population doubling
@@ -135,11 +135,11 @@ public class CellCountExperimentDS {
 	 * @param cellCount
 	 * @return
 	 */
-	private BigDecimal populationDoublingComputation(CellCountDTO cellCount) {
-		double result = (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()))
-				/ Math.log10(2);
-
-		return new BigDecimal(result);
-	}
+//	private BigDecimal populationDoublingComputation(CellCountDTO cellCount) {
+//		double result = (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()))
+//				/ Math.log10(2);
+//
+//		return new BigDecimal(result);
+//	}
 
 }

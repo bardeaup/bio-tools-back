@@ -54,13 +54,10 @@ public class ExperimentMapper {
 				List<CellularCount> cellCountList = new ArrayList<>();
 				for (CellCountDTO cellCountDTO : conditionDTO.getCellCountList()) {
 					CellularCount cellularCount = new CellularCount();
-					cellularCount.setBeginDate(cellCountDTO.getBeginDate());
-					cellularCount.setInitialQuantity(cellCountDTO.getInitialQuantity());
-					cellularCount.setEndDate(cellCountDTO.getEndDate());
-					cellularCount.setFinalQuantity(cellCountDTO.getFinalQuantity());
+					cellularCount.setDate(cellCountDTO.getDate());
+					cellularCount.setQuantity(cellCountDTO.getQuantity());
 					cellularCount.setDt(cellCountDTO.getDoublingTime().doubleValue());
 					cellularCount.setPd(cellCountDTO.getPopulationDoubling().doubleValue());
-					cellularCount.setFinalPd(cellCountDTO.getFinalPopulationDoubling().doubleValue());
 					cellularCount.setCondition(condition);
 					cellCountList.add(cellularCount);
 				}
