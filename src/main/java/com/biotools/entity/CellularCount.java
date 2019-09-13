@@ -19,11 +19,14 @@ public class CellularCount {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+	
+	@Column(nullable =  false)
+	private int replicatId;
 
-	@Column
+	@Column(nullable =  false)
 	private Date date;
 	
-	@Column 
+	@Column (nullable =  false)
 	private int quantity;
 	
 	@Column(columnDefinition = "double default 0")

@@ -28,9 +28,13 @@ public interface ExperimentMapperMapstruct {
 	
 	@Mapping(target="cellularCountList", source="cellCountList")
 	Condition ConditionDTOToEntity(ConditionDTO conditionDTO);
-	
+
 	List<CellularCount> cellCountDTOListToEntity (List<CellCountDTO> cellCountDTOList);
-	
+	@Mappings({
+		@Mapping(target="condition.id", source="conditionId"),
+		@Mapping(target="pd", source="populationDoubling"),
+		@Mapping(target="dt", source="doublingTime")
+	})
 	CellularCount cellCountDTOToEntity (CellCountDTO cellCountDTO);
 	
 	List<Treatment> treatmentDTOListToEntity (List<TreatmentDTO> treatmentDTOList);

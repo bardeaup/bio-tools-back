@@ -1,10 +1,6 @@
 package com.biotools.ds;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountProjectDTO;
 import com.biotools.dto.ConditionDTO;
+import com.biotools.entity.CellularCount;
 import com.biotools.entity.Experiment;
 import com.biotools.mapper.ExperimentMapper;
+import com.biotools.repository.CellularCountRepository;
 import com.biotools.repository.ProliferationExperimentRepository;
 import com.biotools.repository.UserRepository;
 import com.biotools.security.services.UserPrinciple;
@@ -33,10 +31,23 @@ public class CellCountExperimentDS {
 	@Autowired
 	private UserRepository userRepo;
 	
+	@Autowired 
+	private CellularCountRepository cellularCountRepo;
+	
 	@Transactional
 	public boolean isExperimentNameAlreadyUsed(String projectName) {
 		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return experimentRepo.existsByUserIdAndProjectName(principal.getId(), projectName);
+	}
+	
+	@Transactional
+	public List<CellularCount> findCellularCountListByConditionId(Long conditionId){
+		return this.cellularCountRepo.findByConditionId(conditionId);
+	}
+	
+	@Transactional
+	public List<CellularCount> saveCellularCountList(List<CellularCount> cellularCountList){
+		return this.cellularCountRepo.saveAll(cellularCountList);
 	}
 	
 
@@ -58,6 +69,11 @@ public class CellCountExperimentDS {
 		proliferationExperimentEntity.setUser(userRepo.findUserById(principal.getId()));
 		Experiment savedExp = experimentRepo.saveAndFlush(proliferationExperimentEntity);
 		return savedExp;
+	}
+	
+	public void analyseCellCount(List<CellCountDTO> actualCellCountList, List<CellCountDTO> previousCellCountList){
+		
+		
 	}
 
 	/**

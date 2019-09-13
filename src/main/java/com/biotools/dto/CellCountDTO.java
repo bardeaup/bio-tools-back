@@ -10,7 +10,7 @@ import lombok.Data;
 public class CellCountDTO implements Serializable {
 
 	private static final long serialVersionUID = 8235241511770606171L;
-	private Long conditionId;
+	private Long replicatId;
 	private Date date;
 	private int quantity;
 	private BigDecimal populationDoubling;

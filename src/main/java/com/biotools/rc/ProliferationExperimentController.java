@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biotools.as.CellCountExperimentAS;
-import com.biotools.dto.CellCountDTO;
+import com.biotools.dto.CellularCountConditonDTO;
 import com.biotools.dto.CellularCountProjectDTO;
 import com.biotools.exceptions.UnicityConstraintException;
 
@@ -39,8 +39,8 @@ public class ProliferationExperimentController {
 	
 	@PostMapping(path = "count")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<CellularCountProjectDTO> saveCellCount(@RequestBody List<CellCountDTO> cellCountDTOList){
-		
+	public ResponseEntity<CellularCountConditonDTO> saveCellCount(@RequestBody CellularCountConditonDTO cellCountConditionDTO){
+		this.cellCountExperimentAS.saveCellCount(cellCountConditionDTO);
 		return null;
 	}
 

@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.biotools.ds.CellCountExperimentDS;
+import com.biotools.dto.CellularCountConditonDTO;
 import com.biotools.dto.CellularCountProjectDTO;
+import com.biotools.entity.CellularCount;
 import com.biotools.entity.Experiment;
 import com.biotools.exceptions.UnicityConstraintException;
 import com.biotools.mapper.ExperimentMapperMapstruct;
@@ -28,7 +30,8 @@ public class CellCountExperimentAS {
 	 * @throws UnicityConstraintException
 	 */
 	@Transactional
-	public CellularCountProjectDTO saveProliferationExperiment(CellularCountProjectDTO p) throws UnicityConstraintException {
+	public CellularCountProjectDTO saveProliferationExperiment(CellularCountProjectDTO p)
+			throws UnicityConstraintException {
 
 		boolean projectNameError = this.cellCountExperimentDS.isExperimentNameAlreadyUsed(p.getProjectName());
 		if (projectNameError) {
@@ -59,6 +62,18 @@ public class CellCountExperimentAS {
 
 	}
 
+	public CellularCountProjectDTO saveCellCount(CellularCountConditonDTO cellularCountConditonDTO) {
+
+		// Recherche des comptes cellulaires existants pour cette condition
+		List<CellularCount> cellularCounts = this.cellCountExperimentDS
+				.findCellularCountListByConditionId(cellularCountConditonDTO.getConditionId());
+
+		// Si il en existe -> calcul PD et DT
+//			this.cellCountExperimentDS.saveCellularCountList(mapper.cellCountDTOListToEntity(cellCountDTOList));
+
+		return null;
+	}
+
 	/**
 	 * Chargement en BDD des expériences de l'utilisateur
 	 * 
@@ -78,7 +93,7 @@ public class CellCountExperimentAS {
 		Experiment experiment = cellCountExperimentDS.loadUserExistingExperimentByName(name);
 		return this.mapper.proliferationExperimentEntityToDto(experiment);
 	}
-	
+
 	public CellularCountProjectDTO loadExistingUserExperimentById(Long id) {
 		CellularCountProjectDTO cellularCountProjectDTO = null;
 		Experiment experiment = cellCountExperimentDS.loadUserExistingExperimentById(id);
