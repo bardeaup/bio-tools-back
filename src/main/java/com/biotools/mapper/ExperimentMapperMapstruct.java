@@ -1,5 +1,6 @@
 package com.biotools.mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.mapstruct.Mapper;
@@ -31,9 +32,8 @@ public interface ExperimentMapperMapstruct {
 
 	List<CellularCount> cellCountDTOListToEntity (List<CellCountDTO> cellCountDTOList);
 	@Mappings({
-		@Mapping(target="condition.id", source="conditionId"),
 		@Mapping(target="pd", source="populationDoubling"),
-		@Mapping(target="dt", source="doublingTime")
+		@Mapping(target="dt", source="doublingTime"),
 	})
 	CellularCount cellCountDTOToEntity (CellCountDTO cellCountDTO);
 	
@@ -55,8 +55,19 @@ public interface ExperimentMapperMapstruct {
 		
 	List<ConditionDTO> ConditionEntityListToDto (List<Condition> conditionList);
 	
-	@Mapping(target="cellCountList", source="cellularCountList")
-	ConditionDTO conditionEntityToDto(Condition condition);
+//	@Mapping(target="cellCountList", source="cellularCountList", ignore = true)
+//	ConditionDTO conditionEntityToDto(Condition condition);
+	
+	default ConditionDTO conditionEntityToDto(Condition condition) {
+        ConditionDTO c = new ConditionDTO();
+        c.setId(condition.getId());
+        c.setCellLine(condition.getCellLine());
+        c.setInitialPopulationDoubling(new BigDecimal(condition.getInitialPopulationDoubling()));
+        c.setTreatmentList(this.treatmentEntityListToDto(condition.getTreatmentList()));
+        c.setFirstSeeding(condition.getCellularCountList() == null || condition.getCellularCountList().isEmpty());
+        c.setCellCountList(this.cellCountEntityListToDto(condition.getCellularCountList()));
+        return c;
+    }
 	
 	List<CellCountDTO> cellCountEntityListToDto (List<CellularCount> cellCountEntityList);
 	

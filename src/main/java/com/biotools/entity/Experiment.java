@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,14 +36,15 @@ public class Experiment {
 	@Column
 	private Date creationDate;
 
-	@OneToMany(mappedBy = "experiment", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "experiment", cascade = CascadeType.ALL, 
+			orphanRemoval = true,fetch = FetchType.LAZY)
 	private List<Condition> conditions = new ArrayList<Condition>();
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Detail detail;
 
 }

@@ -22,6 +22,9 @@ public class CellularCount {
 	
 	@Column(nullable =  false)
 	private int replicatId;
+	
+	@Column(nullable = false, columnDefinition= "NUMBER default 1")
+	private int period;
 
 	@Column(nullable =  false)
 	private Date date;
@@ -29,7 +32,7 @@ public class CellularCount {
 	@Column (nullable =  false)
 	private int quantity;
 	
-	@Column(columnDefinition = "double default 0")
+	@Column(columnDefinition = "double default 0.0")
 	private Double pd;
 	
 	@Column

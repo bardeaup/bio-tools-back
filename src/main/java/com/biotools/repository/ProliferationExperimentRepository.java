@@ -24,5 +24,13 @@ public interface ProliferationExperimentRepository extends JpaRepository<Experim
 	Experiment findByUserIdAndProjectNameIgnoreCase(Long userId, String projectName);
 	
 	Experiment findByUserIdAndId(Long userId, Long id);
+	
+
+	
+//	@Query("select e.projectName, d from Experiment e "
+//			+ "inner join e.detail d "
+//			+ "where lower(e.projectName) like lower(:projectName) AND e.user.id = :userId")
+//	Experiment findCustomExperimentByUserIdAndProjectNameIgnoreCase(@Param(value = "userId") Long userId,
+//			@Param(value = "projectName") String projectName);
 
 }

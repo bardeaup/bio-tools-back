@@ -2,26 +2,38 @@ package com.biotools.as;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.biotools.ds.CellCountExperimentDS;
+import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountConditonDTO;
 import com.biotools.dto.CellularCountProjectDTO;
+import com.biotools.dto.ConditionDTO;
 import com.biotools.entity.CellularCount;
+import com.biotools.entity.Condition;
 import com.biotools.entity.Experiment;
 import com.biotools.exceptions.UnicityConstraintException;
+import com.biotools.mapper.ExperimentMapper;
 import com.biotools.mapper.ExperimentMapperMapstruct;
+import com.biotools.repository.ProliferationExperimentRepository;
 
 @Service
 public class CellCountExperimentAS {
 
-	@Autowired
-	CellCountExperimentDS cellCountExperimentDS;
-
-	@Autowired
-	ExperimentMapperMapstruct mapper;
+	private static final int FIRST_PERIOD = 1;
+	private CellCountExperimentDS cellCountExperimentDS;
+	private ExperimentMapper experimentMapper;
+	private ExperimentMapperMapstruct mapper;
+	
+	//autowire by constructor
+	public CellCountExperimentAS(CellCountExperimentDS cellCountExperimentDS, 
+			ExperimentMapperMapstruct mapper, ExperimentMapper experimentMapper,
+			ProliferationExperimentRepository experimentRepo) {
+		this.cellCountExperimentDS = cellCountExperimentDS;
+		this.mapper = mapper;
+		this.experimentMapper = experimentMapper;
+	}
 
 	/**
 	 * 
@@ -62,16 +74,29 @@ public class CellCountExperimentAS {
 
 	}
 
-	public CellularCountProjectDTO saveCellCount(CellularCountConditonDTO cellularCountConditonDTO) {
+	public CellularCountConditonDTO saveCellCount(CellularCountConditonDTO cellularCountConditonDTO) {
 
 		// Recherche des comptes cellulaires existants pour cette condition
-		List<CellularCount> cellularCounts = this.cellCountExperimentDS
-				.findCellularCountListByConditionId(cellularCountConditonDTO.getConditionId());
+//		List<CellularCount> cellularCounts = this.cellCountExperimentDS
+//				.findCellularCountListByConditionId(cellularCountConditonDTO.getConditionId());
+
+		
+		// Récupération de la quantité ensemmencée
+		
 
 		// Si il en existe -> calcul PD et DT
-//			this.cellCountExperimentDS.saveCellularCountList(mapper.cellCountDTOListToEntity(cellCountDTOList));
+		List<CellularCount> seededCountList = mapper.cellCountDTOListToEntity(cellularCountConditonDTO.getSeededCounts());
+		
+		Condition condition = this.cellCountExperimentDS.findConditionById(cellularCountConditonDTO.getConditionId());
+		for(CellularCount count : seededCountList) {
+			count.setCondition(condition);
+		}
+		condition.addCellularCountList(seededCountList);		
+		condition = this.cellCountExperimentDS.saveCondition(condition);
+		
+		
 
-		return null;
+		return cellularCountConditonDTO;
 	}
 
 	/**
@@ -88,15 +113,34 @@ public class CellCountExperimentAS {
 		return cellularCountProjectDTOs;
 	}
 
+	/**
+	 * Return Experiment , Detail, Conditions with Treatments but without CountList
+	 * When a count event has already been done, a boolean alreadyStarted = true (mapping)  
+	 * @param name
+	 * @return CellularCountProjectDTO
+	 */
 	public CellularCountProjectDTO loadExistingUserExperimentByName(String name) {
 		CellularCountProjectDTO cellularCountProjectDTO = null;
 		Experiment experiment = cellCountExperimentDS.loadUserExistingExperimentByName(name);
-		return this.mapper.proliferationExperimentEntityToDto(experiment);
+		cellularCountProjectDTO = this.mapper.proliferationExperimentEntityToDto(experiment);
+		for(ConditionDTO conditionDTO: cellularCountProjectDTO.getConditionList()) {
+			int period = 0;
+			for(CellCountDTO cellCount : conditionDTO.getCellCountList()) {
+				while(cellCount.getPeriod() > period) {
+					period = cellCount.getPeriod();
+				}
+			}
+			conditionDTO.setLastPeriod(period);
+		}
+		return cellularCountProjectDTO;
 	}
 
 	public CellularCountProjectDTO loadExistingUserExperimentById(Long id) {
 		CellularCountProjectDTO cellularCountProjectDTO = null;
 		Experiment experiment = cellCountExperimentDS.loadUserExistingExperimentById(id);
+		
+		
+		
 		return this.mapper.proliferationExperimentEntityToDto(experiment);
 	}
 }

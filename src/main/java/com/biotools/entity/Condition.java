@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,17 +30,23 @@ public class Condition {
 	@Column
 	private Double initialPopulationDoubling;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "experiment_id")
 	private Experiment experiment;
 	
 	@OneToMany(mappedBy = "condition",
             cascade = CascadeType.ALL,
+            		fetch = FetchType.LAZY,
             orphanRemoval = true)
 	private List<CellularCount> cellularCountList = new ArrayList<CellularCount>();
 	
+	public void addCellularCountList(List<CellularCount> cellCountList){
+	    this.cellularCountList.addAll(cellCountList);
+	}
+	
 	@OneToMany(mappedBy = "condition",
             cascade = CascadeType.ALL,
+            		fetch = FetchType.LAZY,
             orphanRemoval = true)
 	private List<Treatment> treatmentList= new ArrayList<Treatment>();
 	

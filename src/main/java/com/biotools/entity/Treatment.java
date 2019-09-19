@@ -31,6 +31,6 @@ public class Treatment {
 	@JoinColumn(name = "condition_id")
 	private Condition condition;
 	
-	@OneToOne(cascade = {CascadeType.ALL})
+	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
 	private ConcentrationUnit unit;
 }

@@ -40,8 +40,8 @@ public class ProliferationExperimentController {
 	@PostMapping(path = "count")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<CellularCountConditonDTO> saveCellCount(@RequestBody CellularCountConditonDTO cellCountConditionDTO){
-		this.cellCountExperimentAS.saveCellCount(cellCountConditionDTO);
-		return null;
+		
+		return new ResponseEntity<CellularCountConditonDTO>(cellCountExperimentAS.saveCellCount(cellCountConditionDTO), HttpStatus.OK);
 	}
 
 	@GetMapping(path = "all")
