@@ -1,6 +1,5 @@
 package com.biotools.ds;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountProjectDTO;
-import com.biotools.dto.ConditionDTO;
+import com.biotools.dto.CountTreatmentDTO;
 import com.biotools.entity.CellularCount;
 import com.biotools.entity.Condition;
 import com.biotools.entity.Experiment;
@@ -49,6 +48,11 @@ public class CellCountExperimentDS {
 	@Transactional
 	public List<CellularCount> findCellularCountListByConditionId(Long conditionId) {
 		return this.cellularCountRepo.findByConditionId(conditionId);
+	}
+	
+	@Transactional
+	public List<CellularCount> findCellularCountListByConditionIdAndPeriod(Long conditionId, int period) {
+		return this.cellularCountRepo.findByConditionIdAndPeriod(conditionId,period);
 	}
 
 	@Transactional
@@ -95,34 +99,39 @@ public class CellCountExperimentDS {
 
 	}
 
-	/**
-	 * Déclanche le calcul de PD et DT
-	 * 
-	 * @param conditionList
-	 * @return
-	 */
-	public List<ConditionDTO> analyseCellCountExperiment(List<ConditionDTO> conditionList) {
-
-		for (ConditionDTO condition : conditionList) {
-			BigDecimal finalPD = new BigDecimal(0);
-			if (condition.getInitialPopulationDoubling() != null) {
-				finalPD = condition.getInitialPopulationDoubling();
-			}
-			if (condition.getCellCountList() != null && !condition.getCellCountList().isEmpty()) {
-				for (CellCountDTO count : condition.getCellCountList()) {
-//					count.setDoublingTime(this.doublingTimeComputation(count).setScale(2, RoundingMode.HALF_UP));
-//					count.setPopulationDoubling(
-//							this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
-//					// gestion du PD total en fonction du PD initial.
-//					finalPD = count.getPopulationDoubling().add(finalPD);
-//					count.setFinalPopulationDoubling(finalPD);
-
-				}
-			}
-		}
-
-		return conditionList;
+	
+	public List<CountTreatmentDTO> analyseCellCountExperiment(List<CountTreatmentDTO> countTreatmentDTOs){
+		return countTreatmentDTOs;
 	}
+	
+//	/**
+//	 * Déclanche le calcul de PD et DT
+//	 * 
+//	 * @param conditionList
+//	 * @return
+//	 */
+//	public List<ConditionDTO> analyseCellCountExperiment(List<ConditionDTO> conditionList) {
+//
+//		for (ConditionDTO condition : conditionList) {
+//			BigDecimal finalPD = new BigDecimal(0);
+//			if (condition.getInitialPopulationDoubling() != null) {
+//				finalPD = condition.getInitialPopulationDoubling();
+//			}
+//			if (condition.getCellCountList() != null && !condition.getCellCountList().isEmpty()) {
+//				for (CellCountDTO count : condition.getCellCountList()) {
+////					count.setDoublingTime(this.doublingTimeComputation(count).setScale(2, RoundingMode.HALF_UP));
+////					count.setPopulationDoubling(
+////							this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
+////					// gestion du PD total en fonction du PD initial.
+////					finalPD = count.getPopulationDoubling().add(finalPD);
+////					count.setFinalPopulationDoubling(finalPD);
+//
+//				}
+//			}
+//		}
+//
+//		return conditionList;
+//	}
 
 	@Transactional
 	public List<Experiment> loadUserExistingExperiment() {

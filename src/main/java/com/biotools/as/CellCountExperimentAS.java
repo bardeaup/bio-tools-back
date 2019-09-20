@@ -1,5 +1,7 @@
 package com.biotools.as;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountConditonDTO;
 import com.biotools.dto.CellularCountProjectDTO;
 import com.biotools.dto.ConditionDTO;
+import com.biotools.dto.CountTreatmentDTO;
 import com.biotools.entity.CellularCount;
 import com.biotools.entity.Condition;
 import com.biotools.entity.Experiment;
@@ -65,7 +68,7 @@ public class CellCountExperimentAS {
 			throw new Exception("Project name already used");
 		}
 		if (p != null && p.getConditionList() != null && !p.getConditionList().isEmpty()) {
-			p.setConditionList(this.cellCountExperimentDS.analyseCellCountExperiment(p.getConditionList()));
+			// p.setConditionList(this.cellCountExperimentDS.analyseCellCountExperiment(p.getConditionList()));
 			this.cellCountExperimentDS.saveCellCountExperiment(p);
 			return p;
 		} else {
@@ -82,6 +85,31 @@ public class CellCountExperimentAS {
 
 		
 		// Récupération de la quantité ensemmencée
+		if(cellularCountConditonDTO.getFinalCounts() != null) {
+			
+			// Déclancher le calcul PD et DT, retourner la liste finale avec les PD et DT calculés et 
+			List<CellularCount> cellularCountsSeeded = this.cellCountExperimentDS
+					.findCellularCountListByConditionIdAndPeriod(cellularCountConditonDTO.getConditionId(), 
+							cellularCountConditonDTO.getFinalCounts().get(0).getPeriod());
+			// Mapping de la liste de CountTreatmentDTO
+			List<CountTreatmentDTO> countTreatmentDTOList = new ArrayList<>();
+			for(CellularCount seededCount : cellularCountsSeeded) {
+				CountTreatmentDTO countTreatmentDTO = new CountTreatmentDTO();
+				countTreatmentDTO.setReplicatId(seededCount.getReplicatId());
+				countTreatmentDTO.setInitialDate(seededCount.getDate());
+				countTreatmentDTO.setInitialQuantity(seededCount.getQuantity());
+				countTreatmentDTO.setInitialPopulationDoubling(new BigDecimal(seededCount.getPd()));
+				for(CellCountDTO finalCount : cellularCountConditonDTO.getFinalCounts()) {
+					if(finalCount.getReplicatId() == seededCount.getReplicatId()) {
+						countTreatmentDTO.setFinalDate(finalCount.getDate());
+						countTreatmentDTO.setFinalQuantity(finalCount.getQuantity());
+					}
+				}
+				countTreatmentDTOList.add(countTreatmentDTO);
+			}
+			this.cellCountExperimentDS.analyseCellCountExperiment(countTreatmentDTOList);
+			
+		}
 		
 
 		// Si il en existe -> calcul PD et DT

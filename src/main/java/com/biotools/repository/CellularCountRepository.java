@@ -9,5 +9,7 @@ import com.biotools.entity.CellularCount;
 public interface CellularCountRepository extends JpaRepository<CellularCount,Long> {
 	
 	List<CellularCount> findByConditionId(Long conditionId);
+	
+	List<CellularCount> findByConditionIdAndPeriod(Long conditionId, int period);
 
 }
