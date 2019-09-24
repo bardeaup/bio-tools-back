@@ -11,8 +11,7 @@ import com.biotools.ds.CellCountExperimentDS;
 import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountConditonDTO;
 import com.biotools.dto.CellularCountProjectDTO;
-import com.biotools.dto.ConditionDTO;
-import com.biotools.dto.CountTreatmentDTO;
+import com.biotools.dto.CountForAnalysisDTO;
 import com.biotools.entity.CellularCount;
 import com.biotools.entity.Condition;
 import com.biotools.entity.Experiment;
@@ -28,11 +27,10 @@ public class CellCountExperimentAS {
 	private CellCountExperimentDS cellCountExperimentDS;
 	private ExperimentMapper experimentMapper;
 	private ExperimentMapperMapstruct mapper;
-	
-	//autowire by constructor
-	public CellCountExperimentAS(CellCountExperimentDS cellCountExperimentDS, 
-			ExperimentMapperMapstruct mapper, ExperimentMapper experimentMapper,
-			ProliferationExperimentRepository experimentRepo) {
+
+	// autowire by constructor
+	public CellCountExperimentAS(CellCountExperimentDS cellCountExperimentDS, ExperimentMapperMapstruct mapper,
+			ExperimentMapper experimentMapper, ProliferationExperimentRepository experimentRepo) {
 		this.cellCountExperimentDS = cellCountExperimentDS;
 		this.mapper = mapper;
 		this.experimentMapper = experimentMapper;
@@ -79,50 +77,82 @@ public class CellCountExperimentAS {
 
 	public CellularCountConditonDTO saveCellCount(CellularCountConditonDTO cellularCountConditonDTO) {
 
-		// Recherche des comptes cellulaires existants pour cette condition
-//		List<CellularCount> cellularCounts = this.cellCountExperimentDS
-//				.findCellularCountListByConditionId(cellularCountConditonDTO.getConditionId());
-
+		// Chargement de la condition en cours de traitement
+		Condition condition = this.cellCountExperimentDS.findConditionById(cellularCountConditonDTO.getConditionId());
+		
+		// Première période pouvant être enregistrée, dans ce cas là, la liste du compte final 
+		// est null, seul les cellules ensemmencées seront sauvegardées.
+		int actualPeriod = 1;
 		
 		// Récupération de la quantité ensemmencée
-		if(cellularCountConditonDTO.getFinalCounts() != null) {
-			
-			// Déclancher le calcul PD et DT, retourner la liste finale avec les PD et DT calculés et 
+		if (cellularCountConditonDTO.getFinalCounts() != null) {
+			actualPeriod = cellularCountConditonDTO.getFinalCounts().get(0).getPeriod();
+			// Déclancher le calcul PD et DT, retourner la liste finale avec les PD et DT
+			// calculés et
 			List<CellularCount> cellularCountsSeeded = this.cellCountExperimentDS
-					.findCellularCountListByConditionIdAndPeriod(cellularCountConditonDTO.getConditionId(), 
-							cellularCountConditonDTO.getFinalCounts().get(0).getPeriod());
+					.findCellularCountListByConditionIdAndPeriod(cellularCountConditonDTO.getConditionId(),
+							actualPeriod);
 			// Mapping de la liste de CountTreatmentDTO
-			List<CountTreatmentDTO> countTreatmentDTOList = new ArrayList<>();
-			for(CellularCount seededCount : cellularCountsSeeded) {
-				CountTreatmentDTO countTreatmentDTO = new CountTreatmentDTO();
-				countTreatmentDTO.setReplicatId(seededCount.getReplicatId());
-				countTreatmentDTO.setInitialDate(seededCount.getDate());
-				countTreatmentDTO.setInitialQuantity(seededCount.getQuantity());
-				countTreatmentDTO.setInitialPopulationDoubling(new BigDecimal(seededCount.getPd()));
-				for(CellCountDTO finalCount : cellularCountConditonDTO.getFinalCounts()) {
-					if(finalCount.getReplicatId() == seededCount.getReplicatId()) {
-						countTreatmentDTO.setFinalDate(finalCount.getDate());
-						countTreatmentDTO.setFinalQuantity(finalCount.getQuantity());
+			List<CountForAnalysisDTO> countListForAnalysis = new ArrayList<>();
+			for (CellularCount seededCount : cellularCountsSeeded) {
+				CountForAnalysisDTO countForAnalysis = new CountForAnalysisDTO();
+				countForAnalysis.setReplicatId(seededCount.getReplicatId());
+				countForAnalysis.setInitialDate(seededCount.getDate());
+				countForAnalysis.setInitialQuantity(seededCount.getQuantity());
+				countForAnalysis.setInitialPopulationDoubling(new BigDecimal(seededCount.getPd()));
+				for (CellCountDTO finalCount : cellularCountConditonDTO.getFinalCounts()) {
+					if (finalCount.getReplicatId() == seededCount.getReplicatId()) {
+						countForAnalysis.setFinalDate(finalCount.getDate());
+						countForAnalysis.setFinalQuantity(finalCount.getQuantity());
 					}
 				}
-				countTreatmentDTOList.add(countTreatmentDTO);
+				countListForAnalysis.add(countForAnalysis);
 			}
-			this.cellCountExperimentDS.analyseCellCountExperiment(countTreatmentDTOList);
-			
-		}
-		
+			List<CountForAnalysisDTO> analysedCountList = this.cellCountExperimentDS
+					.analyseCellCountExperiment(countListForAnalysis);
 
-		// Si il en existe -> calcul PD et DT
+			// Mapping List<CountForAnalysisDTO> to List<CellularCount>
+			List<CellularCount> finalCountList = new ArrayList<>();
+			for (CountForAnalysisDTO analysedCount : analysedCountList) {
+				CellularCount cellularCountEntity = new CellularCount();
+				cellularCountEntity.setDate(analysedCount.getFinalDate());
+				cellularCountEntity.setDt(analysedCount.getDoublingTime().doubleValue());
+				cellularCountEntity.setPd(analysedCount.getFinalPopulationDoubling().doubleValue());
+				cellularCountEntity.setPeriod(actualPeriod);
+				cellularCountEntity.setReplicatId(analysedCount.getReplicatId());
+				cellularCountEntity.setCondition(condition);
+				cellularCountEntity.setQuantity(analysedCount.getFinalQuantity());
+				finalCountList.add(cellularCountEntity);
+				
+				// Mise à jour du PD de chaque réplicat ensemmencé pour la prochaine période
+				for (CellCountDTO seededCount : cellularCountConditonDTO.getSeededCounts()) {
+					if (seededCount.getReplicatId() == analysedCount.getReplicatId()) {
+						seededCount.setPopulationDoubling(analysedCount.getFinalPopulationDoubling());
+					}
+				}
+			}
+			condition.addCellularCountList(finalCountList);
+		}
+
+		// Mapping et enregistrement de la liste de compte de cellules ensemencées -
+		// récupération de la condition pour permettre la liaison.
 		List<CellularCount> seededCountList = mapper.cellCountDTOListToEntity(cellularCountConditonDTO.getSeededCounts());
-		
-		Condition condition = this.cellCountExperimentDS.findConditionById(cellularCountConditonDTO.getConditionId());
-		for(CellularCount count : seededCountList) {
+		for (CellularCount count : seededCountList) {
 			count.setCondition(condition);
 		}
-		condition.addCellularCountList(seededCountList);		
+		condition.addCellularCountList(seededCountList);
+		
+		// Si il y a une quantité de cellules ensemencées pour la prochaine période étudiée,
+		// actualPeriod représentant la période actuellement en cours de traitement 
+		// pour une condition donnée prend cette dernière valeur.
+		if(cellularCountConditonDTO.getSeededCounts() != null 
+				&& !cellularCountConditonDTO.getSeededCounts().isEmpty()
+				&& cellularCountConditonDTO.getSeededCounts().get(0).getPeriod() > 0) {
+			actualPeriod = cellularCountConditonDTO.getSeededCounts().get(0).getPeriod();
+		}
+		condition.setActualPeriod(actualPeriod);
+		
 		condition = this.cellCountExperimentDS.saveCondition(condition);
-		
-		
 
 		return cellularCountConditonDTO;
 	}
@@ -143,32 +173,21 @@ public class CellCountExperimentAS {
 
 	/**
 	 * Return Experiment , Detail, Conditions with Treatments but without CountList
-	 * When a count event has already been done, a boolean alreadyStarted = true (mapping)  
+	 * When a count event has already been done, a boolean alreadyStarted = true
+	 * (mapping)
+	 * 
 	 * @param name
 	 * @return CellularCountProjectDTO
 	 */
 	public CellularCountProjectDTO loadExistingUserExperimentByName(String name) {
 		CellularCountProjectDTO cellularCountProjectDTO = null;
 		Experiment experiment = cellCountExperimentDS.loadUserExistingExperimentByName(name);
-		cellularCountProjectDTO = this.mapper.proliferationExperimentEntityToDto(experiment);
-		for(ConditionDTO conditionDTO: cellularCountProjectDTO.getConditionList()) {
-			int period = 0;
-			for(CellCountDTO cellCount : conditionDTO.getCellCountList()) {
-				while(cellCount.getPeriod() > period) {
-					period = cellCount.getPeriod();
-				}
-			}
-			conditionDTO.setLastPeriod(period);
-		}
-		return cellularCountProjectDTO;
+		return this.mapper.proliferationExperimentEntityToDto(experiment);
 	}
 
 	public CellularCountProjectDTO loadExistingUserExperimentById(Long id) {
 		CellularCountProjectDTO cellularCountProjectDTO = null;
 		Experiment experiment = cellCountExperimentDS.loadUserExistingExperimentById(id);
-		
-		
-		
 		return this.mapper.proliferationExperimentEntityToDto(experiment);
 	}
 }

@@ -7,11 +7,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountProjectDTO;
 import com.biotools.dto.ConditionDTO;
 import com.biotools.dto.TreatmentDTO;
-import com.biotools.entity.CellularCount;
 import com.biotools.entity.Condition;
 import com.biotools.entity.Detail;
 import com.biotools.entity.Experiment;
@@ -50,19 +48,19 @@ public class ExperimentMapper {
 			condition.setCellLine(conditionDTO.getCellLine());
 			condition.setInitialPopulationDoubling(conditionDTO.getInitialPopulationDoubling().doubleValue());
 			// --- COMPTES CELLULAIRES --------
-			if (conditionDTO.getCellCountList() != null && !conditionDTO.getCellCountList().isEmpty()) {
-				List<CellularCount> cellCountList = new ArrayList<>();
-				for (CellCountDTO cellCountDTO : conditionDTO.getCellCountList()) {
-					CellularCount cellularCount = new CellularCount();
-					cellularCount.setDate(cellCountDTO.getDate());
-					cellularCount.setQuantity(cellCountDTO.getQuantity());
-					cellularCount.setDt(cellCountDTO.getDoublingTime().doubleValue());
-					cellularCount.setPd(cellCountDTO.getPopulationDoubling().doubleValue());
-					cellularCount.setCondition(condition);
-					cellCountList.add(cellularCount);
-				}
-				condition.getCellularCountList().addAll(cellCountList);
-			}
+//			if (conditionDTO.getCellCountList() != null && !conditionDTO.getCellCountList().isEmpty()) {
+//				List<CellularCount> cellCountList = new ArrayList<>();
+//				for (CellCountDTO cellCountDTO : conditionDTO.getCellCountList()) {
+//					CellularCount cellularCount = new CellularCount();
+//					cellularCount.setDate(cellCountDTO.getDate());
+//					cellularCount.setQuantity(cellCountDTO.getQuantity());
+//					cellularCount.setDt(cellCountDTO.getDoublingTime().doubleValue());
+//					cellularCount.setPd(cellCountDTO.getPopulationDoubling().doubleValue());
+//					cellularCount.setCondition(condition);
+//					cellCountList.add(cellularCount);
+//				}
+//				condition.getCellularCountList().addAll(cellCountList);
+//			}
 			List<Treatment> treatmentList = new ArrayList<>();
 			if(conditionDTO.getTreatmentList() != null && !conditionDTO.getTreatmentList().isEmpty()) {
 				for(TreatmentDTO treatmentDTO : conditionDTO.getTreatmentList()) {

@@ -10,12 +10,8 @@ public class ConditionDTO {
 	private Long id;
 	private String cellLine;
 	private boolean isAdherentCell;
-	/**
-	 * true if it's the first time this condition tested (first seeding event)
-	 */
-	private boolean firstSeeding;
-	private int lastPeriod;
+	private Integer actualPeriod;
 	private BigDecimal initialPopulationDoubling;
-	private List<CellCountDTO> cellCountList;
+	// private List<CellCountDTO> cellCountList;
 	private List<TreatmentDTO> treatmentList;
 }

@@ -19,7 +19,7 @@ import com.biotools.dto.CellularCountConditonDTO;
 import com.biotools.dto.CellularCountProjectDTO;
 import com.biotools.exceptions.UnicityConstraintException;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/proliferation-experiment")
 public class ProliferationExperimentController {
@@ -27,6 +27,12 @@ public class ProliferationExperimentController {
 	@Autowired
 	CellCountExperimentAS cellCountExperimentAS;
 
+	/**
+	 * Sauvegarde de l'expérience définie côté IHM, première interface (aucun compte de cellules)
+	 * @param p expérience
+	 * @return expérience sauvegardée
+	 * @throws UnicityConstraintException dans le cas où le nom de l'expérience a déjà été utilisé
+	 */
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<CellularCountProjectDTO> saveExperiment(@RequestBody CellularCountProjectDTO p)
@@ -58,7 +64,7 @@ public class ProliferationExperimentController {
 
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<CellularCountProjectDTO> loadUserExperimentByBame(@RequestParam(name = "name", required = false) String name,
+	public ResponseEntity<CellularCountProjectDTO> loadUserExperimentByName(@RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "id", required = false) Long id) {
 		CellularCountProjectDTO cellularCountProjectDTO;
 		if (name != null) {

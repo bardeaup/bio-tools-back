@@ -1,5 +1,10 @@
 package com.biotools.ds;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,9 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.biotools.dto.CellCountDTO;
 import com.biotools.dto.CellularCountProjectDTO;
-import com.biotools.dto.CountTreatmentDTO;
+import com.biotools.dto.CountForAnalysisDTO;
 import com.biotools.entity.CellularCount;
 import com.biotools.entity.Condition;
 import com.biotools.entity.Experiment;
@@ -49,10 +53,10 @@ public class CellCountExperimentDS {
 	public List<CellularCount> findCellularCountListByConditionId(Long conditionId) {
 		return this.cellularCountRepo.findByConditionId(conditionId);
 	}
-	
+
 	@Transactional
 	public List<CellularCount> findCellularCountListByConditionIdAndPeriod(Long conditionId, int period) {
-		return this.cellularCountRepo.findByConditionIdAndPeriod(conditionId,period);
+		return this.cellularCountRepo.findByConditionIdAndPeriod(conditionId, period);
 	}
 
 	@Transactional
@@ -63,76 +67,17 @@ public class CellCountExperimentDS {
 	@Transactional
 	public Condition findConditionById(Long id) {
 		Optional<Condition> optCondi = this.conditionRepo.findById(id);
-		if(optCondi.isPresent()) {
+		if (optCondi.isPresent()) {
 			return optCondi.get();
 		} else {
-			throw new DataAccessResourceFailureException("Condition "+id+"not found.");
+			throw new DataAccessResourceFailureException("Condition " + id + "not found.");
 		}
 	}
 
 	public Condition saveCondition(Condition c) {
 		return this.conditionRepo.save(c);
 	}
-
-	/**
-	 * Sauvegarde en BDD l'expérience
-	 * 
-	 * @param project
-	 * @return experiment id
-	 */
-	@Transactional
-	public Experiment saveCellCountExperiment(CellularCountProjectDTO project) {
-
-		// Récupération de l'id User
-		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-		// Mapping vers Entity
-		Experiment proliferationExperimentEntity = this.experimentMapper
-				.cellularCountProjectDTOToProliferationExperimentEntity(project);
-
-		proliferationExperimentEntity.setUser(this.userRepo.findUserById(principal.getId()));
-		Experiment savedExp = this.experimentRepo.saveAndFlush(proliferationExperimentEntity);
-		return savedExp;
-	}
-
-	public void analyseCellCount(List<CellCountDTO> actualCellCountList, List<CellCountDTO> previousCellCountList) {
-
-	}
-
 	
-	public List<CountTreatmentDTO> analyseCellCountExperiment(List<CountTreatmentDTO> countTreatmentDTOs){
-		return countTreatmentDTOs;
-	}
-	
-//	/**
-//	 * Déclanche le calcul de PD et DT
-//	 * 
-//	 * @param conditionList
-//	 * @return
-//	 */
-//	public List<ConditionDTO> analyseCellCountExperiment(List<ConditionDTO> conditionList) {
-//
-//		for (ConditionDTO condition : conditionList) {
-//			BigDecimal finalPD = new BigDecimal(0);
-//			if (condition.getInitialPopulationDoubling() != null) {
-//				finalPD = condition.getInitialPopulationDoubling();
-//			}
-//			if (condition.getCellCountList() != null && !condition.getCellCountList().isEmpty()) {
-//				for (CellCountDTO count : condition.getCellCountList()) {
-////					count.setDoublingTime(this.doublingTimeComputation(count).setScale(2, RoundingMode.HALF_UP));
-////					count.setPopulationDoubling(
-////							this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
-////					// gestion du PD total en fonction du PD initial.
-////					finalPD = count.getPopulationDoubling().add(finalPD);
-////					count.setFinalPopulationDoubling(finalPD);
-//
-//				}
-//			}
-//		}
-//
-//		return conditionList;
-//	}
-
 	@Transactional
 	public List<Experiment> loadUserExistingExperiment() {
 		// Récupération de l'id User
@@ -156,22 +101,60 @@ public class CellCountExperimentDS {
 	}
 
 	/**
+	 * Sauvegarde en BDD l'expérience
+	 * 
+	 * @param project
+	 * @return experiment id
+	 */
+	@Transactional
+	public Experiment saveCellCountExperiment(CellularCountProjectDTO project) {
+
+		// Récupération de l'id User
+		UserPrinciple principal = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		// Mapping vers Entity
+		Experiment proliferationExperimentEntity = this.experimentMapper
+				.cellularCountProjectDTOToProliferationExperimentEntity(project);
+
+		proliferationExperimentEntity.setUser(this.userRepo.findUserById(principal.getId()));
+		Experiment savedExp = this.experimentRepo.saveAndFlush(proliferationExperimentEntity);
+		return savedExp;
+	}
+
+	/**
+	 * Déclanche le calcul de PD et DT
+	 * 
+	 * @param conditionList
+	 * @return
+	 */
+	public List<CountForAnalysisDTO> analyseCellCountExperiment(List<CountForAnalysisDTO> countListForAnalysisDTO) {
+
+		for (CountForAnalysisDTO count : countListForAnalysisDTO) {
+			count.setDoublingTime(this.doublingTimeComputation(count).setScale(2, RoundingMode.HALF_UP));
+			count.setFinalPopulationDoubling(this.populationDoublingComputation(count).setScale(2, RoundingMode.HALF_UP));
+		}
+
+		return countListForAnalysisDTO;
+	}
+	
+
+	/**
 	 * Calcul du doubling time
 	 * 
 	 * @param cellCount
 	 * @return
 	 */
-//	private BigDecimal doublingTimeComputation(CellCountDTO cellCount) {
-//
-//		LocalDateTime fromDateTime = LocalDateTime.ofInstant(cellCount.getBeginDate().toInstant(),
-//				ZoneId.systemDefault());
-//		LocalDateTime toDateTime = LocalDateTime.ofInstant(cellCount.getEndDate().toInstant(), ZoneId.systemDefault());
-//		double hours = LocalDateTime.from(fromDateTime).until(toDateTime, ChronoUnit.HOURS);
-//		double result = (Math.log10(2) * hours)
-//				/ (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()));
-//
-//		return new BigDecimal(result);
-//	}
+	private BigDecimal doublingTimeComputation(CountForAnalysisDTO cellCount) {
+
+		LocalDateTime fromDateTime = LocalDateTime.ofInstant(cellCount.getInitialDate().toInstant(),
+				ZoneId.systemDefault());
+		LocalDateTime toDateTime = LocalDateTime.ofInstant(cellCount.getFinalDate().toInstant(), ZoneId.systemDefault());
+		double hours = LocalDateTime.from(fromDateTime).until(toDateTime, ChronoUnit.HOURS);
+		double result = (Math.log10(2) * hours)
+				/ (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()));
+
+		return new BigDecimal(result);
+	}
 
 	/**
 	 * Calcul du Population doubling
@@ -179,11 +162,11 @@ public class CellCountExperimentDS {
 	 * @param cellCount
 	 * @return
 	 */
-//	private BigDecimal populationDoublingComputation(CellCountDTO cellCount) {
-//		double result = (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()))
-//				/ Math.log10(2);
-//
-//		return new BigDecimal(result);
-//	}
+	private BigDecimal populationDoublingComputation(CountForAnalysisDTO cellCount) {
+		double result = (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()))
+				/ Math.log10(2);
+
+		return new BigDecimal(result);
+	}
 
 }

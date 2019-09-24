@@ -30,13 +30,16 @@ public class Condition {
 	@Column
 	private Double initialPopulationDoubling;
 	
+	@Column
+	private Integer actualPeriod;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "experiment_id")
 	private Experiment experiment;
 	
 	@OneToMany(mappedBy = "condition",
             cascade = CascadeType.ALL,
-            		fetch = FetchType.LAZY,
+    		fetch = FetchType.LAZY,
             orphanRemoval = true)
 	private List<CellularCount> cellularCountList = new ArrayList<CellularCount>();
 	
@@ -46,7 +49,7 @@ public class Condition {
 	
 	@OneToMany(mappedBy = "condition",
             cascade = CascadeType.ALL,
-            		fetch = FetchType.LAZY,
+            fetch = FetchType.LAZY,
             orphanRemoval = true)
 	private List<Treatment> treatmentList= new ArrayList<Treatment>();
 	

@@ -1,6 +1,5 @@
 package com.biotools.mapper;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.mapstruct.Mapper;
@@ -27,7 +26,6 @@ public interface ExperimentMapperMapstruct {
 		
 	List<Condition> ConditionDTOListToEntity (List<ConditionDTO> conditionDTOList);
 	
-	@Mapping(target="cellularCountList", source="cellCountList")
 	Condition ConditionDTOToEntity(ConditionDTO conditionDTO);
 
 	List<CellularCount> cellCountDTOListToEntity (List<CellCountDTO> cellCountDTOList);
@@ -53,29 +51,17 @@ public interface ExperimentMapperMapstruct {
 	
 	DetailDTO detailEntityToDto(Detail detail);
 		
-	List<ConditionDTO> ConditionEntityListToDto (List<Condition> conditionList);
+	List<ConditionDTO> conditionEntityListToDto (List<Condition> conditionList);
 	
-//	@Mapping(target="cellCountList", source="cellularCountList", ignore = true)
-//	ConditionDTO conditionEntityToDto(Condition condition);
+	ConditionDTO conditionEntityToDto(Condition condition);
 	
-	default ConditionDTO conditionEntityToDto(Condition condition) {
-        ConditionDTO c = new ConditionDTO();
-        c.setId(condition.getId());
-        c.setCellLine(condition.getCellLine());
-        c.setInitialPopulationDoubling(new BigDecimal(condition.getInitialPopulationDoubling()));
-        c.setTreatmentList(this.treatmentEntityListToDto(condition.getTreatmentList()));
-        c.setFirstSeeding(condition.getCellularCountList() == null || condition.getCellularCountList().isEmpty());
-        c.setCellCountList(this.cellCountEntityListToDto(condition.getCellularCountList()));
-        return c;
-    }
-	
-	List<CellCountDTO> cellCountEntityListToDto (List<CellularCount> cellCountEntityList);
-	
-	@Mappings({
-	      @Mapping(target="populationDoubling", source="pd"),
-	      @Mapping(target="doublingTime", source="dt")
-	    })
-	CellCountDTO cellCountEntityToDto (CellularCount cellCountEntity);
+//	List<CellCountDTO> cellCountEntityListToDto (List<CellularCount> cellCountEntityList);
+//	
+//	@Mappings({
+//	      @Mapping(target="populationDoubling", source="pd"),
+//	      @Mapping(target="doublingTime", source="dt")
+//	    })
+//	CellCountDTO cellCountEntityToDto (CellularCount cellCountEntity);
 	
 	List<TreatmentDTO> treatmentEntityListToDto (List<Treatment> treatmentEntityList);
 	
