@@ -73,7 +73,8 @@ public class CellCountExperimentDS {
 			throw new DataAccessResourceFailureException("Condition " + id + "not found.");
 		}
 	}
-
+	
+	@Transactional
 	public Condition saveCondition(Condition c) {
 		return this.conditionRepo.save(c);
 	}
@@ -124,8 +125,8 @@ public class CellCountExperimentDS {
 	/**
 	 * Déclanche le calcul de PD et DT
 	 * 
-	 * @param conditionList
-	 * @return
+	 * @param list of CountForAnalysisDTO with initial and final date and cell quantity
+	 * @return list of CountForAnalysisDTO with PD and DT set 
 	 */
 	public List<CountForAnalysisDTO> analyseCellCountExperiment(List<CountForAnalysisDTO> countListForAnalysisDTO) {
 

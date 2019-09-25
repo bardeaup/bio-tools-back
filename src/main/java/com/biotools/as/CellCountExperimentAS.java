@@ -37,10 +37,10 @@ public class CellCountExperimentAS {
 	}
 
 	/**
-	 * 
-	 * @param p
-	 * @return experiment id form database
-	 * @throws UnicityConstraintException
+	 * Experiment saving when user design it the first time
+	 * @param p experiment designed by user
+	 * @return experiment id fromm database
+	 * @throws UnicityConstraintException if prject name already used
 	 */
 	@Transactional
 	public CellularCountProjectDTO saveProliferationExperiment(CellularCountProjectDTO p)
@@ -54,27 +54,11 @@ public class CellCountExperimentAS {
 	}
 
 	/**
-	 * 
-	 * @param p
-	 * @return
-	 * @throws Exception
+	 * Triggers PD and DT evaluation and save all cellular count related data in DB 
+	 * @param cellularCountConditonDTO from IHM 
+	 * @return cellularCountConditonDTO updated with data calculated and saved in DB
 	 */
-	public CellularCountProjectDTO saveAndAnalyseExperiement(CellularCountProjectDTO p) throws Exception {
-
-		boolean projectNameError = this.cellCountExperimentDS.isExperimentNameAlreadyUsed(p.getProjectName());
-		if (projectNameError) {
-			throw new Exception("Project name already used");
-		}
-		if (p != null && p.getConditionList() != null && !p.getConditionList().isEmpty()) {
-			// p.setConditionList(this.cellCountExperimentDS.analyseCellCountExperiment(p.getConditionList()));
-			this.cellCountExperimentDS.saveCellCountExperiment(p);
-			return p;
-		} else {
-			throw new Exception("UNCOMPLETE_DATA_SET");
-		}
-
-	}
-
+	@Transactional
 	public CellularCountConditonDTO saveCellCount(CellularCountConditonDTO cellularCountConditonDTO) {
 
 		// Chargement de la condition en cours de traitement
