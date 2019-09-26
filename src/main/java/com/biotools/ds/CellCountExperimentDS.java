@@ -167,7 +167,7 @@ public class CellCountExperimentDS {
 		double result = (Math.log10(cellCount.getFinalQuantity()) - Math.log10(cellCount.getInitialQuantity()))
 				/ Math.log10(2);
 
-		return new BigDecimal(result);
+		return new BigDecimal(result).add(cellCount.getInitialPopulationDoubling());
 	}
 
 }
