@@ -1,16 +1,15 @@
 package com.biotools.security.services;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+import com.biotools.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.biotools.entity.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class UserPrinciple implements UserDetails {
 	
@@ -25,14 +24,18 @@ public class UserPrinciple implements UserDetails {
 	@JsonIgnore
 	private String password;
 
+	@JsonIgnore
+	private String userSecret;
+
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public UserPrinciple(Long id, String username, String email, String password,
+	public UserPrinciple(Long id, String username, String email, String password, String userSecret,
 			Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.password = password;
+		this.userSecret = userSecret;
 		this.authorities = authorities;
 	}
 
@@ -40,7 +43,7 @@ public class UserPrinciple implements UserDetails {
 		List<GrantedAuthority> authorities = user.getRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
 
-		return new UserPrinciple(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(), authorities);
+		return new UserPrinciple(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(), user.getUserSecret(), authorities);
 	}
 
 	public Long getId() {
@@ -96,5 +99,13 @@ public class UserPrinciple implements UserDetails {
 
 		UserPrinciple user = (UserPrinciple) o;
 		return Objects.equals(id, user.id);
+	}
+
+	public String getUserSecret() {
+		return userSecret;
+	}
+
+	public void setUserSecret(String userSecret) {
+		this.userSecret = userSecret;
 	}
 }
