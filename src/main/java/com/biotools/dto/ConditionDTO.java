@@ -1,9 +1,9 @@
 package com.biotools.dto;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.List;
-
-import lombok.Data;
 
 @Data
 public class ConditionDTO {
@@ -12,6 +12,6 @@ public class ConditionDTO {
 	private boolean isAdherentCell;
 	private Integer actualPeriod;
 	private BigDecimal initialPopulationDoubling;
-	// private List<CellCountDTO> cellCountList;
+	private List<CellCountDTO> cellCountList;
 	private List<TreatmentDTO> treatmentList;
 }
