@@ -1,4 +1,4 @@
-package com.biotools.rc;
+package com.biotools.rest;
 
 import com.biotools.dto.LoginFormDTO;
 import com.biotools.entity.Role;
@@ -11,6 +11,8 @@ import com.biotools.repository.RoleRepository;
 import com.biotools.repository.UserRepository;
 import com.biotools.security.jwt.JwtProvider;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,9 +31,11 @@ import java.util.Set;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
-public class AuthRestAPIs {
+public class AuthRestController {
 
 	private static final int USER_SECRET_SIZE = 20;
+
+	private static final Logger logger = LoggerFactory.getLogger(AuthRestController.class);
 
 	@Autowired
 	AuthenticationManager authenticationManager;
@@ -48,8 +52,11 @@ public class AuthRestAPIs {
 	@Autowired
 	JwtProvider jwtProvider;
 
+
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginFormDTO loginRequest) {
+
+		logger.info("Class : {} ; Call endpoint POST authenticateUser : {}", AuthRestController.class.getName(), loginRequest.getUsername());
 
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -63,6 +70,9 @@ public class AuthRestAPIs {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody LoginFormDTO signUpRequest) {
+
+		logger.info("Class : {} ; Call endpoint POST registerUser : {}", AuthRestController.class.getName(), signUpRequest.getUsername());
+
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return new ResponseEntity<>(new ResponseMessage("Username is already taken!"),
 					HttpStatus.BAD_REQUEST);
@@ -109,6 +119,8 @@ public class AuthRestAPIs {
 
 	@PostMapping(value = "/refresh", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> refreshToken(@RequestBody RefreshRequest refreshRequest) {
+		logger.info("Class : {} ; Call endpoint POST refreshToken", AuthRestController.class.getName());
+
 		try {
 			String newToken = jwtProvider.refreshJwtToken(refreshRequest.refreshToken);
 			JwtResponse jwtResponse = new JwtResponse();

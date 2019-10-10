@@ -1,4 +1,4 @@
-package com.biotools.ds;
+package com.biotools.service;
 
 import com.biotools.entity.User;
 import com.biotools.repository.UserRepository;
@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserDS {
 
     @Autowired
     private UserRepository userRepository;
