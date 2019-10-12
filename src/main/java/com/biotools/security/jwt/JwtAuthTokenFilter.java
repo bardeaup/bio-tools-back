@@ -1,12 +1,6 @@
 package com.biotools.security.jwt;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
- 
+import com.biotools.security.services.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +8,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.web.filter.OncePerRequestFilter;
-import com.biotools.security.jwt.JwtProvider;
+import org.springframework.web.filter.GenericFilterBean;
 
-import com.biotools.security.services.UserDetailsServiceImpl;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
  
  
-public class JwtAuthTokenFilter extends OncePerRequestFilter {
+public class JwtAuthTokenFilter extends GenericFilterBean {
  
   @Autowired
   private JwtProvider tokenProvider;
@@ -29,12 +28,12 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
   private UserDetailsServiceImpl userDetailsService;
  
   private static final Logger logger = LoggerFactory.getLogger(JwtAuthTokenFilter.class);
- 
+
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws ServletException, IOException {
+  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    final HttpServletRequest request = (HttpServletRequest) servletRequest;
+    final HttpServletResponse response = (HttpServletResponse) servletResponse;
     try {
- 
       String jwt = getJwt(request);
       if (jwt != null && tokenProvider.validateJwtToken(jwt)) {
         String username = tokenProvider.getUserNameFromJwtToken(jwt);

@@ -1,25 +1,13 @@
 package com.biotools.entity;
 
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
  
 @Entity
 @Table(name = "user", uniqueConstraints = {
@@ -48,6 +36,10 @@ public class User{
     @NotBlank
     @Size(min=6, max = 100)
     private String password;
+
+    @NotBlank
+    @Size(min=20, max = 20)
+    private String userSecret;
  
     @ManyToMany
     @JoinTable(name = "user_roles", 
@@ -63,10 +55,11 @@ public class User{
  
     public User() {}
  
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, String userSecret) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.userSecret = userSecret;
     }
  
     public Long getId() {
@@ -107,5 +100,21 @@ public class User{
  
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getUserSecret() {
+        return userSecret;
+    }
+
+    public void setUserSecret(String userSecret) {
+        this.userSecret = userSecret;
+    }
+
+    public List<Experiment> getProliferationExperimentList() {
+        return proliferationExperimentList;
+    }
+
+    public void setProliferationExperimentList(List<Experiment> proliferationExperimentList) {
+        this.proliferationExperimentList = proliferationExperimentList;
     }
 }
