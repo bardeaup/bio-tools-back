@@ -45,7 +45,7 @@ public class ProliferationExperimentRestController {
 	@PostMapping(path = "count")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<CellularCountConditonDTO> saveCellCount(@RequestBody CellularCountConditonDTO cellCountConditionDTO){
-		
+		logger.info("Class : {} ; Call endpoint POST saveCellCount", ProliferationExperimentRestController.class.getName());
 		return new ResponseEntity<CellularCountConditonDTO>(cellCountExperimentAS.saveCellCount(cellCountConditionDTO), HttpStatus.OK);
 	}
 
@@ -68,7 +68,7 @@ public class ProliferationExperimentRestController {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<CellularCountProjectDTO> loadUserExperimentByName(@RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "id", required = false) Long id) {
-		logger.info("Class : {} ; Call endpoint GET loadUserExperimentByName : {}", name, ProliferationExperimentRestController.class.getName());
+		logger.info("Class : {} ; Call endpoint GET loadUserExperimentByName : {}", ProliferationExperimentRestController.class.getName(), name);
 
 		CellularCountProjectDTO cellularCountProjectDTO;
 		if (name != null) {
