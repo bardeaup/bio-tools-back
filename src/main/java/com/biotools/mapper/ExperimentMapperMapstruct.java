@@ -1,21 +1,12 @@
 package com.biotools.mapper;
 
-import java.util.List;
-
+import com.biotools.dto.*;
+import com.biotools.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-import com.biotools.dto.CellCountDTO;
-import com.biotools.dto.CellularCountProjectDTO;
-import com.biotools.dto.ConditionDTO;
-import com.biotools.dto.DetailDTO;
-import com.biotools.dto.TreatmentDTO;
-import com.biotools.entity.CellularCount;
-import com.biotools.entity.Condition;
-import com.biotools.entity.Detail;
-import com.biotools.entity.Experiment;
-import com.biotools.entity.Treatment;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ExperimentMapperMapstruct {
@@ -52,16 +43,17 @@ public interface ExperimentMapperMapstruct {
 	DetailDTO detailEntityToDto(Detail detail);
 		
 	List<ConditionDTO> conditionEntityListToDto (List<Condition> conditionList);
-	
+
+	@Mapping(target="cellCountList", source="cellularCountList")
 	ConditionDTO conditionEntityToDto(Condition condition);
-	
-//	List<CellCountDTO> cellCountEntityListToDto (List<CellularCount> cellCountEntityList);
-//	
-//	@Mappings({
-//	      @Mapping(target="populationDoubling", source="pd"),
-//	      @Mapping(target="doublingTime", source="dt")
-//	    })
-//	CellCountDTO cellCountEntityToDto (CellularCount cellCountEntity);
+
+	List<CellCountDTO> cellCountEntityListToDto (List<CellularCount> cellCountEntityList);
+
+	@Mappings({
+	      @Mapping(target="populationDoubling", source="pd"),
+	      @Mapping(target="doublingTime", source="dt")
+	    })
+	CellCountDTO cellCountEntityToDto (CellularCount cellCountEntity);
 	
 	List<TreatmentDTO> treatmentEntityListToDto (List<Treatment> treatmentEntityList);
 	

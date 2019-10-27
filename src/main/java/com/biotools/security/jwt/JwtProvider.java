@@ -1,9 +1,9 @@
 package com.biotools.security.jwt;
 
-import com.biotools.ds.UserService;
 import com.biotools.entity.User;
 import com.biotools.message.response.JwtResponse;
 import com.biotools.security.services.UserPrinciple;
+import com.biotools.service.UserDS;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClaims;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class JwtProvider {
     private int JWT_REFRESH;
 
     @Autowired
-    private UserService userService;
+    private UserDS userService;
 
     public JwtResponse generateJwtToken(Authentication authentication) {
  
