@@ -1,8 +1,10 @@
 package com.biotools.rc;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -72,8 +74,23 @@ public class ProliferationExperimentController {
 		} else {
 			cellularCountProjectDTO = this.cellCountExperimentAS.loadExistingUserExperimentById(id);
 		}
-		return new ResponseEntity<CellularCountProjectDTO>(cellularCountProjectDTO, HttpStatus.OK);
+		if(cellularCountProjectDTO == null){
+			return new ResponseEntity<>(cellularCountProjectDTO, HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<>(cellularCountProjectDTO, HttpStatus.OK);
+		}
 
 	}
 
+	@GetMapping(path = "history")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public ResponseEntity<Page<CellularCountProjectDTO>> loadUserExperimentHistory(
+			@RequestParam int page,
+			@RequestParam int size,
+			@RequestParam Optional<String> experimentName,
+			@RequestParam Optional<String> cells,
+			@RequestParam Optional<String> treatment) {
+		return new ResponseEntity<>(cellCountExperimentAS.loadUserExperimentHistory(page, size, experimentName, cells, treatment),
+				HttpStatus.OK);
+	}
 }

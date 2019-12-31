@@ -16,6 +16,7 @@ import com.biotools.entity.Condition;
 import com.biotools.entity.Detail;
 import com.biotools.entity.Experiment;
 import com.biotools.entity.Treatment;
+import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring")
 public interface ExperimentMapperMapstruct {
@@ -40,7 +41,10 @@ public interface ExperimentMapperMapstruct {
 	Treatment treatmentDTOToEntity (TreatmentDTO treatmentDTO);
 
 	// --------- Mapping inverse --------------------
-	
+
+	default Page<CellularCountProjectDTO> proliferationExperimentEntityPageToDto(Page<Experiment> experiments) {
+		return experiments.map(this::proliferationExperimentEntityToDto);
+	}
 
 	List<CellularCountProjectDTO> proliferationExperimentEntityListToDto(
 			List<Experiment> experimentList);
@@ -70,6 +74,5 @@ public interface ExperimentMapperMapstruct {
 	      @Mapping(target="concentrationUnitLabel", source="unit.unitLabel")
 	      })
 	TreatmentDTO treatmentEntityToDto (Treatment treatmentEntity);
-	
-	
+
 }

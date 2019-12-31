@@ -1,5 +1,6 @@
 package com.biotools.rc;
 
+import com.biotools.exceptions.DataNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,7 +15,11 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(value = { UnicityConstraintException.class})
 	protected ResponseEntity<CustomError> handleUniqueConstraintViolation(UnicityConstraintException e){
-		return new ResponseEntity<CustomError>(new CustomError(e.getReason() + " already used.", "WARNING"), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new CustomError(e.getReason() + " already used.", "WARNING"), HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(value = { DataNotFoundException.class})
+	protected ResponseEntity<CustomError> handleDataNotFoundException(DataNotFoundException e){
+		return new ResponseEntity<>(new CustomError(e.getMessage(), "INFO"), HttpStatus.BAD_REQUEST);
+	}
 }

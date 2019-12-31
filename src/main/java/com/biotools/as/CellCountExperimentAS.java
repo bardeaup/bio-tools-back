@@ -3,7 +3,10 @@ package com.biotools.as;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,17 +26,13 @@ import com.biotools.repository.ProliferationExperimentRepository;
 @Service
 public class CellCountExperimentAS {
 
-	private static final int FIRST_PERIOD = 1;
 	private CellCountExperimentDS cellCountExperimentDS;
-	private ExperimentMapper experimentMapper;
 	private ExperimentMapperMapstruct mapper;
 
 	// autowire by constructor
-	public CellCountExperimentAS(CellCountExperimentDS cellCountExperimentDS, ExperimentMapperMapstruct mapper,
-			ExperimentMapper experimentMapper, ProliferationExperimentRepository experimentRepo) {
+	public CellCountExperimentAS(CellCountExperimentDS cellCountExperimentDS, ExperimentMapperMapstruct mapper) {
 		this.cellCountExperimentDS = cellCountExperimentDS;
 		this.mapper = mapper;
-		this.experimentMapper = experimentMapper;
 	}
 
 	/**
@@ -164,14 +163,23 @@ public class CellCountExperimentAS {
 	 * @return CellularCountProjectDTO
 	 */
 	public CellularCountProjectDTO loadExistingUserExperimentByName(String name) {
-		CellularCountProjectDTO cellularCountProjectDTO = null;
 		Experiment experiment = cellCountExperimentDS.loadUserExistingExperimentByName(name);
-		return this.mapper.proliferationExperimentEntityToDto(experiment);
+		if(experiment == null){
+			return null;
+		} else {
+			return this.mapper.proliferationExperimentEntityToDto(experiment);
+		}
 	}
 
 	public CellularCountProjectDTO loadExistingUserExperimentById(Long id) {
 		CellularCountProjectDTO cellularCountProjectDTO = null;
 		Experiment experiment = cellCountExperimentDS.loadUserExistingExperimentById(id);
 		return this.mapper.proliferationExperimentEntityToDto(experiment);
+	}
+
+	public Page<CellularCountProjectDTO> loadUserExperimentHistory(int page, int size, Optional<String> experimentName,
+																   Optional<String> cells, Optional<String> treatment){
+		Page<Experiment> experimentPage = cellCountExperimentDS.loadExperimentHistory(page, size, experimentName, cells, treatment);
+		return this.mapper.proliferationExperimentEntityPageToDto(experimentPage);
 	}
 }
